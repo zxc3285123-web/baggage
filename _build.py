@@ -9,6 +9,7 @@ SITE_URL  = "https://zxc3285123-web.github.io"   # 끝에 / 붙이지 마세요
 OWNER     = "수하물 신호등 운영자"
 EMAIL     = "zxc3285123@gmail.com"
 EFFECTIVE = "2026년 9월 11일"
+PUB_ID    = "pub-8544439780701521"   # 애드센스 게시자 ID
 
 def fill(t):
     return (t.replace("https://YOUR-DOMAIN", SITE_URL)
@@ -65,8 +66,7 @@ def page(*, path, title, desc, body, cur=None, depth=0, head_extra="", body_clas
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;500;700&family=Outfit:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="{up}assets/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧳</text></svg>">
-<!-- 애드센스 승인 후 아래 한 줄의 주석을 풀고 ca-pub-000... 를 본인 게시자 ID로 바꾸세요 -->
-<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script> -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-{PUB_ID}" crossorigin="anonymous"></script>
 {head_extra}</head>
 <body{(' class="'+body_class+'"') if body_class else ''}>
 
@@ -562,9 +562,7 @@ f"""<?xml version="1.0" encoding="UTF-8"?>
 """, encoding="utf-8")
 
 (ROOT / "ads.txt").write_text(
-"""# 애드센스 승인 후 아래 줄의 pub-0000000000000000 을 본인 게시자 ID로 바꾸고 # 을 지우세요.
-# 게시자 ID는 애드센스 > 계정 > 설정 > 계정 정보 에서 확인할 수 있습니다.
-# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
+f"""google.com, {PUB_ID}, DIRECT, f08c47fec0942fa0
 """, encoding="utf-8")
 
 (ROOT / ".nojekyll").write_text("", encoding="utf-8")
