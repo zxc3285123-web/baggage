@@ -12,7 +12,7 @@
 
 ```python
 SITE_NAME = "수하물 신호등"
-SITE_URL  = "https://zxc3285123-web.github.io/baggage"   # 끝에 / 붙이지 마세요
+SITE_URL  = "https://zxc3285123-web.github.io"   # 끝에 / 붙이지 마세요
 OWNER     = "수하물 신호등 운영자"
 EMAIL     = "zxc3285123@gmail.com"
 EFFECTIVE = "2026년 9월 11일"

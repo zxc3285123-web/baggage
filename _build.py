@@ -5,7 +5,7 @@ import os, json, datetime, pathlib
 ROOT = pathlib.Path(__file__).parent
 SITE_NAME = "수하물 신호등"
 # ── 여기만 고치면 사이트 전체에 반영됩니다 ──────────────
-SITE_URL  = "https://zxc3285123-web.github.io/baggage"   # 끝에 / 붙이지 마세요
+SITE_URL  = "https://zxc3285123-web.github.io"   # 끝에 / 붙이지 마세요
 OWNER     = "수하물 신호등 운영자"
 EMAIL     = "zxc3285123@gmail.com"
 EFFECTIVE = "2026년 9월 11일"

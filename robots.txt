@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://zxc3285123-web.github.io/baggage/sitemap.xml
+Sitemap: https://zxc3285123-web.github.io/sitemap.xml
