@@ -1,0 +1,134 @@
+/* 수하물 신호등 — 공통 스타일 */
+:root{
+  --bg:#F1F7FD; --band-1:#D9EDFB; --band-2:#EFF7FE;
+  --surface:#FFFFFF; --surface-soft:#F7FBFF;
+  --line:#DBE7F2; --line-soft:#EAF2F9;
+  --ink:#1E3149; --muted:#6C829A;
+  --accent:#3E97D4; --accent-deep:#2A6E9F; --accent-soft:#DFEEFB;
+  --shadow:0 2px 4px rgba(30,49,73,.04), 0 10px 24px rgba(30,49,73,.06);
+  --shadow-sm:0 1px 2px rgba(30,49,73,.05);
+  --v-both:#33927A;    --v-both-bg:#DEF2EC;    --v-both-line:#B6E0D4;
+  --v-cabin:#3585CB;   --v-cabin-bg:#DEECFB;   --v-cabin-line:#B7D6F2;
+  --v-checked:#B8792A; --v-checked-bg:#FAEDD8; --v-checked-line:#EED6AE;
+  --v-cond:#7168C4;    --v-cond-bg:#E7E5FA;    --v-cond-line:#CFCBF1;
+  --v-ban:#CC4F63;     --v-ban-bg:#FBE2E7;     --v-ban-line:#F2C3CD;
+  --r-lg:22px; --r-md:16px; --r-sm:11px; --r-pill:999px;
+  --font-display:"Gowun Dodum","Noto Sans KR",system-ui,sans-serif;
+  --font-body:"Noto Sans KR",system-ui,-apple-system,sans-serif;
+  --font-num:"Outfit","Noto Sans KR",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101A25; --band-1:#1B2E40; --band-2:#141F2C;
+    --surface:#18232F; --surface-soft:#1D2A38;
+    --line:#2A3B4C; --line-soft:#22303F;
+    --ink:#E6EFF8; --muted:#95AABF;
+    --accent:#6FBBEB; --accent-deep:#9AD1F7; --accent-soft:#1E3549;
+    --shadow:0 2px 4px rgba(0,0,0,.24), 0 10px 24px rgba(0,0,0,.3);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+    --v-both:#6FCAAE;   --v-both-bg:#15332B;   --v-both-line:#255043;
+    --v-cabin:#7CC0F2;  --v-cabin-bg:#14293C;  --v-cabin-line:#26445F;
+    --v-checked:#E7B76E;--v-checked-bg:#332711;--v-checked-line:#584121;
+    --v-cond:#ABA4F2;   --v-cond-bg:#25224E;   --v-cond-line:#3D3873;
+    --v-ban:#F28C9D;    --v-ban-bg:#391D24;    --v-ban-line:#5D3039;
+  }
+}
+*{box-sizing:border-box}
+html{color-scheme:light dark; scroll-behavior:smooth}
+body{margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--font-body); font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased}
+img{max-width:100%; height:auto}
+[hidden]{display:none!important}
+a{color:var(--accent-deep)}
+.wrap{max-width:1000px; margin:0 auto; padding-inline:18px}
+.narrow{max-width:720px}
+
+/* 헤더 */
+.topbar{position:sticky; top:0; z-index:30; background:color-mix(in srgb,var(--bg) 90%, transparent);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+.topbar-in{display:flex; align-items:center; gap:8px; padding-block:11px; flex-wrap:wrap}
+.brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-size:17px;
+  color:var(--ink); text-decoration:none; margin-right:auto}
+.brand span.mark{width:28px; height:28px; border-radius:9px; background:var(--accent-soft);
+  border:1.5px solid var(--v-cabin-line); display:grid; place-items:center; font-size:15px}
+.nav{display:flex; gap:4px; flex-wrap:wrap}
+.nav a{font-size:13.5px; color:var(--muted); text-decoration:none; padding:5px 12px;
+  border-radius:var(--r-pill); border:1.5px solid transparent; transition:all .15s}
+.nav a:hover{color:var(--accent-deep); background:var(--surface); border-color:var(--line)}
+.nav a[aria-current="page"]{background:var(--accent); border-color:var(--accent); color:#fff}
+
+/* 히어로 */
+.hero-band{position:relative; overflow:hidden;
+  background:linear-gradient(178deg,var(--band-1) 0%,var(--band-2) 100%);
+  border-bottom:1px solid var(--line-soft)}
+.hero-band svg{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+.hero-in{position:relative; padding-block:40px 36px}
+.eyebrow{font-family:var(--font-num); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--accent-deep); margin:0 0 8px}
+h1{font-family:var(--font-display); font-weight:400; font-size:clamp(27px,5.6vw,40px);
+  line-height:1.25; margin:0; text-wrap:balance; letter-spacing:-.01em}
+.lede{margin:12px 0 0; max-width:36em; color:var(--muted); font-size:15px}
+
+/* 본문 */
+main{padding-block:30px 56px}
+article.post{max-width:720px; margin:0 auto}
+article.post h2{font-family:var(--font-display); font-weight:400; font-size:23px; margin:38px 0 12px;
+  padding-bottom:8px; border-bottom:1px dashed var(--line); text-wrap:balance}
+article.post h3{font-size:17px; margin:26px 0 8px; font-weight:700}
+article.post p{margin:0 0 14px; font-size:15.2px; line-height:1.85}
+article.post ul, article.post ol{margin:0 0 16px; padding-left:22px; display:flex; flex-direction:column; gap:7px}
+article.post li{font-size:15.2px; line-height:1.8}
+article.post strong{font-weight:700}
+.meta{display:flex; gap:10px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--muted);
+  margin:14px 0 0; font-family:var(--font-num)}
+.tag{background:var(--accent-soft); color:var(--accent-deep); padding:2px 10px;
+  border-radius:var(--r-pill); font-size:11.5px; font-weight:600; letter-spacing:.03em}
+
+/* 카드 · 표 · 콜아웃 */
+.cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:14px}
+.card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--r-md);
+  padding:17px 18px 18px; box-shadow:var(--shadow-sm); text-decoration:none; color:inherit;
+  display:flex; flex-direction:column; gap:7px; transition:transform .16s, box-shadow .16s, border-color .16s}
+a.card:hover{transform:translateY(-2px); box-shadow:var(--shadow); border-color:var(--accent)}
+.card h3{margin:0; font-family:var(--font-display); font-weight:400; font-size:17px; line-height:1.35}
+.card p{margin:0; font-size:13.4px; color:var(--muted)}
+.tablewrap{overflow-x:auto; margin:0 0 18px; border:1.5px solid var(--line); border-radius:var(--r-md); background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:520px; font-size:13.8px}
+th,td{padding:10px 14px; text-align:left; border-bottom:1px solid var(--line-soft)}
+th{background:var(--surface-soft); font-size:12px; font-family:var(--font-num); font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-family:var(--font-num); font-variant-numeric:tabular-nums}
+.callout{background:var(--surface); border:1.5px solid var(--line); border-left:4px solid var(--accent);
+  border-radius:var(--r-sm); padding:14px 17px; margin:0 0 18px}
+.callout p:last-child{margin-bottom:0}
+.callout.warn{border-left-color:var(--v-ban)}
+.callout.ok{border-left-color:var(--v-both)}
+.callout .label{font-family:var(--font-num); font-size:11px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--muted); display:block; margin-bottom:4px}
+.toolcta{display:flex; gap:14px; align-items:center; flex-wrap:wrap; background:var(--accent-soft);
+  border:1.5px solid var(--v-cabin-line); border-radius:var(--r-lg); padding:16px 20px; margin:26px 0}
+.toolcta p{margin:0; flex:1; min-width:200px; font-size:14px}
+.btn{display:inline-block; background:var(--accent); color:#fff; text-decoration:none; font-weight:500;
+  font-size:14px; padding:9px 20px; border-radius:var(--r-pill); border:1.5px solid var(--accent); transition:background .15s}
+.btn:hover{background:var(--accent-deep); border-color:var(--accent-deep)}
+.btn.ghost{background:var(--surface); color:var(--accent-deep); border-color:var(--line)}
+.btn.ghost:hover{background:var(--surface); border-color:var(--accent)}
+.ox{display:inline-block; font-weight:700; font-family:var(--font-num)}
+.ox.o{color:var(--v-both)} .ox.t{color:var(--v-cond)} .ox.x{color:var(--v-ban)}
+
+/* 광고 자리 */
+.adslot{margin:28px auto; text-align:center; min-height:1px}
+.adslot--label{font-family:var(--font-num); font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted); display:block; margin-bottom:6px}
+
+/* 푸터 */
+.sitefoot{border-top:1px solid var(--line); background:var(--surface-soft); padding-block:26px 34px}
+.foot-in{display:flex; flex-wrap:wrap; gap:12px 20px; align-items:baseline}
+.foot-name{font-family:var(--font-display); font-size:15px}
+.foot-links{display:flex; flex-wrap:wrap; gap:4px; margin-left:auto}
+.foot-links a{font-size:13px; color:var(--muted); text-decoration:none; padding:4px 11px;
+  border-radius:var(--r-pill); transition:all .15s}
+.foot-links a:hover{color:var(--accent-deep); background:var(--surface)}
+.foot-copy{flex-basis:100%; font-size:12px; color:var(--muted); margin:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}

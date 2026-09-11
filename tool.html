@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수하물 판별기 — 기내? 위탁? | 수하물 신호등</title>
+<meta name="description" content="항공사와 노선을 고르고 물건 이름을 검색하면 기내·위탁·반입금지를 바로 알려줍니다. 품목 250개, 보조배터리 Wh 계산기 포함.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="수하물 판별기 — 기내? 위탁? | 수하물 신호등">
+<meta property="og:description" content="항공사와 노선을 고르고 물건 이름을 검색하면 기내·위탁·반입금지를 바로 알려줍니다. 품목 250개, 보조배터리 Wh 계산기 포함.">
+<meta property="og:site_name" content="수하물 신호등">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://YOUR-DOMAIN/tool.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@400;500;700&family=Outfit:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧳</text></svg>">
+<!-- 애드센스 승인 후 아래 한 줄의 주석을 풀고 ca-pub-000... 를 본인 게시자 ID로 바꾸세요 -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000" crossorigin="anonymous"></script> -->
+<style>
+  :root{
+    --bg:#F1F7FD;
+    --band-1:#D9EDFB;
+    --band-2:#EFF7FE;
+    --surface:#FFFFFF;
+    --surface-soft:#F7FBFF;
+    --line:#DBE7F2;
+    --line-soft:#EAF2F9;
+    --ink:#1E3149;
+    --muted:#6C829A;
+    --accent:#3E97D4;
+    --accent-deep:#2A6E9F;
+    --accent-soft:#DFEEFB;
+    --shadow:0 2px 4px rgba(30,49,73,.04), 0 10px 24px rgba(30,49,73,.06);
+    --shadow-sm:0 1px 2px rgba(30,49,73,.05);
+
+    --v-both:#33927A;      --v-both-bg:#DEF2EC;    --v-both-line:#B6E0D4;
+    --v-cabin:#3585CB;     --v-cabin-bg:#DEECFB;   --v-cabin-line:#B7D6F2;
+    --v-checked:#B8792A;   --v-checked-bg:#FAEDD8; --v-checked-line:#EED6AE;
+    --v-cond:#7168C4;      --v-cond-bg:#E7E5FA;    --v-cond-line:#CFCBF1;
+    --v-ban:#CC4F63;       --v-ban-bg:#FBE2E7;     --v-ban-line:#F2C3CD;
+
+    --r-lg:22px; --r-md:16px; --r-sm:11px; --r-pill:999px;
+    --font-display:"Gowun Dodum","Noto Sans KR",system-ui,sans-serif;
+    --font-body:"Noto Sans KR",system-ui,-apple-system,sans-serif;
+    --font-num:"Outfit","Noto Sans KR",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#101A25; --band-1:#1B2E40; --band-2:#141F2C;
+      --surface:#18232F; --surface-soft:#1D2A38;
+      --line:#2A3B4C; --line-soft:#22303F;
+      --ink:#E6EFF8; --muted:#95AABF;
+      --accent:#6FBBEB; --accent-deep:#9AD1F7; --accent-soft:#1E3549;
+      --shadow:0 2px 4px rgba(0,0,0,.24), 0 10px 24px rgba(0,0,0,.3);
+      --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+      --v-both:#6FCAAE;   --v-both-bg:#15332B;   --v-both-line:#255043;
+      --v-cabin:#7CC0F2;  --v-cabin-bg:#14293C;  --v-cabin-line:#26445F;
+      --v-checked:#E7B76E;--v-checked-bg:#332711;--v-checked-line:#584121;
+      --v-cond:#ABA4F2;   --v-cond-bg:#25224E;   --v-cond-line:#3D3873;
+      --v-ban:#F28C9D;    --v-ban-bg:#391D24;    --v-ban-line:#5D3039;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#101A25; --band-1:#1B2E40; --band-2:#141F2C;
+    --surface:#18232F; --surface-soft:#1D2A38;
+    --line:#2A3B4C; --line-soft:#22303F;
+    --ink:#E6EFF8; --muted:#95AABF;
+    --accent:#6FBBEB; --accent-deep:#9AD1F7; --accent-soft:#1E3549;
+    --shadow:0 2px 4px rgba(0,0,0,.24), 0 10px 24px rgba(0,0,0,.3);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.3);
+    --v-both:#6FCAAE;   --v-both-bg:#15332B;   --v-both-line:#255043;
+    --v-cabin:#7CC0F2;  --v-cabin-bg:#14293C;  --v-cabin-line:#26445F;
+    --v-checked:#E7B76E;--v-checked-bg:#332711;--v-checked-line:#584121;
+    --v-cond:#ABA4F2;   --v-cond-bg:#25224E;   --v-cond-line:#3D3873;
+    --v-ban:#F28C9D;    --v-ban-bg:#391D24;    --v-ban-line:#5D3039;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-body); font-size:15px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px; margin:0 auto; padding-inline:18px}
+
+  /* ── 컨트롤 ─────────────────────────────── */
+  .controls{
+    position:sticky; top:0; z-index:20;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .ctrl-grid{
+    display:grid; gap:10px; padding-block:12px;
+    grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,1.5fr);
+  }
+  @media (max-width:720px){ .ctrl-grid{grid-template-columns:1fr 1fr} .ctrl-search{grid-column:1/-1} }
+  .field{display:flex; flex-direction:column; gap:5px; min-width:0}
+  .field > label{
+    font-family:var(--font-num); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); padding-left:2px;
+  }
+  select, input[type="search"], input[type="number"]{
+    font-family:var(--font-body); font-size:14px; color:var(--ink);
+    background:var(--surface); border:1.5px solid var(--line);
+    border-radius:var(--r-pill); padding:9px 15px; width:100%;
+    transition:border-color .16s, box-shadow .16s;
+  }
+  select{appearance:none; padding-right:34px; cursor:pointer;
+    background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+    background-position:calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+    background-size:5px 5px, 5px 5px; background-repeat:no-repeat;
+  }
+  input[type="search"]{ -webkit-appearance:none }
+  select:focus-visible, input:focus-visible, button:focus-visible{
+    outline:none; border-color:var(--accent);
+    box-shadow:0 0 0 3.5px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .seg{display:flex; background:var(--surface); border:1.5px solid var(--line); border-radius:var(--r-pill); padding:3px; gap:3px}
+  .seg button{
+    flex:1; border:0; background:transparent; cursor:pointer; color:var(--muted);
+    font-family:var(--font-body); font-size:13.5px; font-weight:500;
+    padding:6px 4px; border-radius:var(--r-pill); transition:background .16s,color .16s;
+  }
+  .seg button[aria-pressed="true"]{background:var(--accent); color:#fff}
+
+  /* ── 항공사 규정 카드 ────────────────────── */
+  main{padding-block:22px 60px}
+  .rulecard{
+    background:var(--surface); border:1.5px solid var(--line);
+    border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden;
+  }
+  .rule-head{
+    display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;
+    padding:16px 20px 12px; border-bottom:1px dashed var(--line);
+  }
+  .rule-name{font-family:var(--font-display); font-size:20px}
+  .rule-code{
+    font-family:var(--font-num); font-size:11px; font-weight:600; letter-spacing:.08em;
+    color:var(--accent-deep); background:var(--accent-soft);
+    padding:2px 8px; border-radius:var(--r-pill);
+  }
+  .rule-tag{margin-left:auto; font-size:12px; color:var(--muted)}
+  .rule-body{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line-soft)}
+  @media (max-width:600px){ .rule-body{grid-template-columns:1fr} }
+  .rule-cell{background:var(--surface); padding:15px 20px 17px; display:flex; flex-direction:column; gap:3px}
+  .rule-cell h3{
+    margin:0 0 4px; font-family:var(--font-num); font-size:11px; font-weight:600;
+    letter-spacing:.13em; text-transform:uppercase; color:var(--muted);
+  }
+  .rule-big{font-family:var(--font-num); font-size:23px; font-weight:600; font-variant-numeric:tabular-nums; line-height:1.25}
+  .rule-sm{font-size:13px; color:var(--muted)}
+  .rule-foot{
+    padding:11px 20px; background:var(--surface-soft); border-top:1px solid var(--line-soft);
+    font-size:12.5px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  }
+  .rule-foot a{color:var(--accent-deep); font-weight:500}
+
+  /* ── 필터 줄 ────────────────────────────── */
+  .filters{display:flex; flex-direction:column; gap:9px; margin-top:26px}
+  .chiprow{display:flex; gap:7px; flex-wrap:wrap}
+  .chip{
+    font-family:var(--font-body); font-size:13px; cursor:pointer;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--muted);
+    padding:5px 13px; border-radius:var(--r-pill); transition:all .15s;
+  }
+  .chip:hover{border-color:var(--accent); color:var(--ink)}
+  .chip[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:var(--bg)}
+  .chip.v[aria-pressed="true"]{background:var(--c); border-color:var(--c); color:#fff}
+  .chip .dot{display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--c); margin-right:6px; vertical-align:1px}
+  .chip.v[aria-pressed="true"] .dot{background:#fff}
+
+  .countline{
+    display:flex; align-items:baseline; gap:8px; margin:22px 0 12px;
+    font-size:13px; color:var(--muted);
+  }
+  .countline b{font-family:var(--font-num); font-size:15px; color:var(--ink); font-weight:600; margin-right:2px}
+
+  /* ── 결과 카드 ──────────────────────────── */
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(272px,1fr)); gap:12px}
+  .item{
+    background:var(--surface); border:1.5px solid var(--line);
+    border-radius:var(--r-md); padding:14px 16px 15px;
+    display:flex; flex-direction:column; gap:9px;
+    box-shadow:var(--shadow-sm); transition:transform .16s, box-shadow .16s, border-color .16s;
+  }
+  .item:hover{transform:translateY(-2px); box-shadow:var(--shadow); border-color:color-mix(in srgb,var(--c) 45%, var(--line))}
+  .item-top{display:flex; align-items:flex-start; gap:10px}
+  .emo{
+    flex:none; width:38px; height:38px; border-radius:12px;
+    display:grid; place-items:center; font-size:19px;
+    background:var(--cbg); border:1px solid var(--cline);
+  }
+  .item-name{font-family:var(--font-display); font-size:16.5px; line-height:1.35; margin:0; flex:1; min-width:0}
+  .item-cat{font-size:11px; color:var(--muted); font-family:var(--font-num); letter-spacing:.04em}
+  .verdict{
+    align-self:flex-start; font-size:12.5px; font-weight:700; letter-spacing:-.01em;
+    color:var(--c); background:var(--cbg); border:1px solid var(--cline);
+    padding:3px 11px; border-radius:var(--r-pill); white-space:nowrap;
+  }
+  .desc{font-size:13.2px; color:var(--muted); margin:0}
+  .desc em{font-style:normal; color:var(--ink); font-weight:500}
+
+  .calc{
+    background:var(--surface-soft); border:1px dashed var(--line);
+    border-radius:12px; padding:10px 11px; display:flex; flex-direction:column; gap:8px;
+  }
+  .calc-row{display:grid; grid-template-columns:auto 1fr; gap:7px 9px; align-items:center}
+  .calc-row label{font-size:11.5px; color:var(--muted); font-family:var(--font-num); letter-spacing:.06em}
+  .calc input[type="number"]{
+    width:100%; max-width:120px; padding:5px 10px; font-family:var(--font-num);
+    font-variant-numeric:tabular-nums; font-size:13.5px; border-radius:9px;
+  }
+  .calc-out{
+    font-size:12.8px; line-height:1.5; padding:7px 10px; border-radius:9px;
+    background:var(--cbg); color:var(--c); border:1px solid var(--cline); font-weight:500;
+  }
+  .calc-out b{font-family:var(--font-num); font-variant-numeric:tabular-nums}
+
+  /* 한눈 결과 배너 */
+  .hero{
+    margin-top:20px; border:2px solid var(--cline); background:var(--cbg);
+    border-radius:var(--r-lg); padding:18px 20px 20px;
+    display:grid; gap:14px 18px; grid-template-columns:auto 1fr auto; align-items:center;
+  }
+  .hero-emo{
+    width:60px; height:60px; border-radius:18px; display:grid; place-items:center;
+    font-size:30px; background:var(--surface); border:1.5px solid var(--cline);
+  }
+  .hero-text{min-width:0}
+  .hero-kicker{
+    font-family:var(--font-num); font-size:10.5px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--c); opacity:.85; margin:0 0 2px;
+  }
+  .hero-name{font-family:var(--font-display); font-size:clamp(21px,4.4vw,27px); margin:0; line-height:1.25}
+  .hero-verdict{font-size:15px; font-weight:700; color:var(--c); margin:2px 0 0}
+  .hero-desc{margin:6px 0 0; font-size:13.2px; color:var(--muted)}
+  .hero-desc em{font-style:normal; color:var(--ink); font-weight:500}
+  .hero-more{margin:8px 0 0; font-size:12.5px; color:var(--muted)}
+  .hero-ox{display:flex; gap:10px}
+  @media (max-width:640px){
+    .hero{grid-template-columns:auto 1fr}
+    .hero-ox{grid-column:1/-1}
+    .hero-ox .oxtile{flex:1}
+  }
+  .oxtile{
+    background:var(--surface); border:1.5px solid var(--line); border-radius:14px;
+    padding:9px 16px 10px; text-align:center; min-width:88px;
+  }
+  .oxtile .t{
+    display:block; font-family:var(--font-num); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:2px;
+  }
+  .oxtile .m{display:block; font-size:26px; line-height:1.1; font-weight:600; color:var(--mc)}
+
+  /* 카드 안 O/X 요약 */
+  .ox{display:flex; gap:7px}
+  .oxpill{
+    flex:1; display:flex; align-items:center; justify-content:center; gap:6px;
+    background:var(--surface-soft); border:1.5px solid var(--line);
+    border-radius:11px; padding:6px 8px; font-size:12.5px; color:var(--muted);
+  }
+  .oxpill .m{font-size:16px; font-weight:700; color:var(--mc); line-height:1}
+
+  /* 초기화 */
+  .reset{
+    margin-left:auto; font-family:var(--font-body); font-size:12.5px; cursor:pointer;
+    border:1.5px solid var(--line); background:var(--surface); color:var(--muted);
+    padding:5px 14px; border-radius:var(--r-pill); transition:all .15s;
+  }
+  .reset:hover{border-color:var(--accent); color:var(--accent-deep)}
+  .reset[data-active="true"]{border-color:var(--accent); background:var(--accent-soft); color:var(--accent-deep); font-weight:500}
+
+  /* 자동완성 · 엔터 경험 */
+  .ctrl-search{position:relative}
+  .suggest{
+    position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:40;
+    margin:0; padding:5px; list-style:none; max-height:302px; overflow-y:auto;
+    background:var(--surface); border:1.5px solid var(--line);
+    border-radius:18px; box-shadow:var(--shadow);
+  }
+  .suggest li{
+    display:flex; align-items:center; gap:10px; padding:7px 10px;
+    border-radius:12px; cursor:pointer; font-size:14px;
+  }
+  .suggest li[aria-selected="true"]{background:var(--accent-soft)}
+  .suggest .s-emo{flex:none; font-size:17px; width:26px; text-align:center}
+  .suggest .s-name{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .suggest .s-name mark{background:transparent; color:var(--accent-deep); font-weight:700; padding:0}
+  .suggest .s-ox{
+    flex:none; font-family:var(--font-num); font-size:12px; letter-spacing:.02em;
+    display:flex; gap:7px; color:var(--muted);
+  }
+  .suggest .s-ox b{font-size:13.5px; font-weight:700}
+  .suggest-foot{
+    display:flex; gap:8px; align-items:center; justify-content:flex-end;
+    padding:7px 11px 4px; font-size:11.5px; color:var(--muted); border-top:1px dashed var(--line); margin-top:4px;
+  }
+  kbd{
+    font-family:var(--font-num); font-size:11px; line-height:1; padding:3px 6px;
+    border:1.5px solid var(--line); border-bottom-width:2.5px; border-radius:6px;
+    background:var(--surface-soft); color:var(--ink);
+  }
+
+  .hero.pop{animation:pop .42s cubic-bezier(.22,1.1,.36,1)}
+  @keyframes pop{
+    0%{transform:scale(.975); box-shadow:0 0 0 0 var(--cline)}
+    55%{transform:scale(1.008); box-shadow:0 0 0 9px color-mix(in srgb,var(--c) 16%, transparent)}
+    100%{transform:scale(1); box-shadow:0 0 0 0 transparent}
+  }
+  .shake{animation:shake .34s}
+  @keyframes shake{
+    0%,100%{transform:translateX(0)} 22%{transform:translateX(-5px)}
+    46%{transform:translateX(5px)} 72%{transform:translateX(-3px)}
+  }
+
+  .empty{
+    text-align:center; padding:56px 20px; border:1.5px dashed var(--line);
+    border-radius:var(--r-lg); background:var(--surface-soft); color:var(--muted);
+  }
+  .empty .big{font-size:34px; display:block; margin-bottom:8px}
+  .rulehint{
+    text-align:left; max-width:600px; margin:16px auto 0; padding-left:22px;
+    display:flex; flex-direction:column; gap:7px; font-size:13.3px; line-height:1.6;
+  }
+  .rulehint li::marker{color:var(--accent); font-family:var(--font-num); font-weight:600}
+  .rulehint b{color:var(--ink)}
+  .hint-foot{margin-top:16px !important; font-size:12.5px}
+  .empty p{margin:0; font-size:14px}
+
+  /* ── 하단 참고 ──────────────────────────── */
+  .notes{
+    margin-top:34px; background:var(--surface); border:1.5px solid var(--line);
+    border-radius:var(--r-lg); padding:20px 22px 22px;
+  }
+  .notes h2{font-family:var(--font-display); font-weight:400; font-size:19px; margin:0 0 14px}
+  .notelist{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px 22px; margin:0; padding:0; list-style:none}
+  .notelist h3{margin:0 0 3px; font-size:13.5px; font-weight:700}
+  .notelist p{margin:0; font-size:13px; color:var(--muted)}
+  .disclaimer{
+    margin-top:18px; font-size:12.5px; color:var(--muted);
+    border-top:1px dashed var(--line); padding-top:14px;
+  }
+  .disclaimer a{color:var(--accent-deep)}
+
+  @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
+</style>
+<style>.controls{top:52px; z-index:25}</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="index.html"><span class="mark">🧳</span>수하물 신호등</a>
+    <nav class="nav" aria-label="주 메뉴">
+        <a href="index.html">홈</a>
+        <a aria-current="page" href="tool.html">수하물 판별기</a>
+        <a href="posts/index.html">여행 가이드</a>
+        <a href="about.html">소개</a>
+        <a href="contact.html">문의</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero-band">
+  <svg viewBox="0 0 1000 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><g fill="var(--surface)" opacity=".5"><ellipse cx="120" cy="48" rx="62" ry="23"/><ellipse cx="168" cy="41" rx="40" ry="19"/><ellipse cx="860" cy="136" rx="78" ry="26"/><ellipse cx="806" cy="129" rx="44" ry="19"/><ellipse cx="560" cy="24" rx="52" ry="17"/></g><g fill="var(--accent)" opacity=".13"><ellipse cx="300" cy="152" rx="95" ry="25"/><ellipse cx="700" cy="56" rx="60" ry="17"/></g><path d="M188 106 q56 -32 118 -28 q62 4 108 30" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="5 8" stroke-linecap="round" opacity=".45"/><path d="M418 104 l16 4 l-16 4 l4 -4 z" fill="var(--accent)" opacity=".6"/></svg>
+  <div class="wrap hero-in">
+    <p class="eyebrow">Cabin · Checked · Prohibited</p>
+    <h1>이 짐, 들고 탈까 부칠까</h1>
+    <p class="lede">항공사와 노선을 고르고 물건 이름을 치면 기내·위탁·반입금지를 신호등처럼 알려드려요. 품목 250개를 담았고, 초성으로도 찾을 수 있어요.</p>
+  </div>
+</section>
+
+<div class="controls">
+  <div class="wrap ctrl-grid">
+    <div class="field">
+      <label for="airline">항공사</label>
+      <select id="airline"></select>
+    </div>
+    <div class="field">
+      <label for="route-dom">노선</label>
+      <div class="seg" role="group" aria-label="노선 선택">
+        <button type="button" id="route-dom" data-route="dom" aria-pressed="false">국내선</button>
+        <button type="button" id="route-int" data-route="int" aria-pressed="true">국제선</button>
+      </div>
+    </div>
+    <form class="field ctrl-search" id="searchform" role="search" autocomplete="off">
+      <label for="q">물건 검색 · 엔터로 확인</label>
+      <input type="search" id="q" placeholder="보조배터리, 김치, 향수, 드론… (ㅂㅈㅂㅌㄹ 도 OK)" autocomplete="off"
+             role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list">
+      <ul class="suggest" id="suggest" role="listbox" aria-label="검색 제안" hidden></ul>
+    </form>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="rulecard" aria-labelledby="rule-name">
+    <div class="rule-head">
+      <span class="rule-name" id="rule-name">대한항공</span>
+      <span class="rule-code" id="rule-code">KE</span>
+      <span class="rule-tag" id="rule-tag">국적 대형항공사</span>
+    </div>
+    <div class="rule-body">
+      <div class="rule-cell">
+        <h3>기내 휴대 수하물</h3>
+        <span class="rule-big" id="rule-cabin-kg">10kg</span>
+        <span class="rule-sm" id="rule-cabin-size">55×40×20cm · 삼변 합 115cm 이내</span>
+        <span class="rule-sm" id="rule-cabin-cnt">가방 1개 + 개인 소지품 1개</span>
+      </div>
+      <div class="rule-cell">
+        <h3>위탁 수하물 (무료)</h3>
+        <span class="rule-big" id="rule-checked-kg">23kg</span>
+        <span class="rule-sm" id="rule-checked-size">1개 · 삼변 합 158cm 이내</span>
+        <span class="rule-sm" id="rule-checked-note">미주 노선은 2개까지</span>
+      </div>
+    </div>
+    <div class="rule-foot">
+      <span id="rule-extra"></span>
+      <a id="rule-link" href="#" target="_blank" rel="noopener">공식 규정 확인 →</a>
+    </div>
+  </section>
+
+  <div class="filters">
+    <div class="chiprow" id="verdict-filters" role="group" aria-label="판정으로 거르기"></div>
+    <div class="chiprow" id="cat-filters" role="group" aria-label="분류로 거르기"></div>
+  </div>
+
+  <section class="hero" id="hero" hidden></section>
+
+  <p class="countline"><b id="count">0</b><span id="count-label">개 품목</span><button type="button" class="reset" id="reset">↺ 검색·필터 초기화</button></p>
+
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>
+    <span class="big">🧳</span>
+    <p>목록에 없는 물건이네요. 아래 <strong>다섯 가지 원칙</strong>으로 대부분 판단할 수 있어요.</p>
+    <ol class="rulehint">
+      <li><b>배터리·전자기기</b>가 들어 있다 → <span style="color:var(--v-cabin)">기내만</span>. 리튬배터리는 위탁이 금지예요.</li>
+      <li><b>흐르거나 짜서 쓰는 것</b>(액체·젤·크림·스프레이) → 국제선은 100ml 이하만 기내, 넘으면 <span style="color:var(--v-checked)">위탁</span>.</li>
+      <li><b>날이 있거나 뾰족한 것</b> → <span style="color:var(--v-checked)">위탁</span>. 날 길이 6cm 이하 가위·손톱깎이 정도만 예외예요.</li>
+      <li><b>길고 단단해 때릴 수 있는 것</b>(운동 장비, 공구, 봉) → <span style="color:var(--v-checked)">위탁</span>.</li>
+      <li><b>불붙거나 터지거나 녹이는 것</b>(가스·인화성·부식성) → <span style="color:var(--v-ban)">기내·위탁 모두 금지</span>.</li>
+    </ol>
+    <p class="hint-foot">그래도 애매하면 항공사 고객센터나 공항 보안검색대에 물어보는 게 가장 확실해요.</p>
+  </div>
+
+  <section class="notes">
+    <h2>짐 싸기 전 꼭 기억할 것</h2>
+    <ul class="notelist">
+      <li>
+        <h3>보조배터리는 무조건 기내로</h3>
+        <p>2025년 3월부터 위탁 수하물에 넣을 수 없고, 기내에서도 선반이 아닌 몸이나 좌석 앞주머니에 보관해야 해요. 기내 충전도 금지입니다.</p>
+      </li>
+      <li>
+        <h3>액체는 용기 표시 용량이 기준</h3>
+        <p>국제선은 100ml 이하 용기만, 1L 투명 지퍼백 1개에 모아야 해요. 200ml 병에 조금 남아 있어도 통과되지 않습니다.</p>
+      </li>
+      <li>
+        <h3>국내선은 액체가 자유로워요</h3>
+        <p>국내선에는 100ml·지퍼백 규정이 적용되지 않아요. 다만 라이터·부탄가스 같은 위험물 규정은 국내선에도 그대로 적용됩니다.</p>
+      </li>
+      <li>
+        <h3>라이터는 기내 1개, 위탁은 0개</h3>
+        <p>1인당 휴대용 라이터 1개 또는 안전성냥 1개만 몸에 지닐 수 있어요. 부치는 짐에 넣으면 적발됩니다.</p>
+      </li>
+      <li>
+        <h3>면세 액체는 봉투를 뜯지 마세요</h3>
+        <p>영수증과 함께 STEB 봉투에 밀봉된 상태여야 기내 반입이 가능해요. 환승할 때 뜯으면 압수될 수 있습니다.</p>
+      </li>
+      <li>
+        <h3>깨지는 것·귀중품은 기내로</h3>
+        <p>현금, 여권, 노트북, 카메라, 약은 위탁 수하물 분실·파손 보상 대상에서 빠지는 경우가 많아 직접 들고 타는 편이 안전해요.</p>
+      </li>
+    </ul>
+    <p class="disclaimer">
+      규정은 운임 등급·노선·기종에 따라 달라질 수 있어요. 특히 특가·라이트 운임은 무료 위탁 수하물이 없는 경우가 많으니 출발 전 예약하신 항공권 기준으로 항공사 공식 페이지를 한 번 더 확인해 주세요.
+      <br>티웨이항공은 2026년 9월 10일부터 <strong>트리니티항공</strong>으로 이름이 바뀌었어요(편명 코드 TW는 그대로).
+    </p>
+  </section>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  const AIRLINES = [
+    { id:"ke", name:"대한항공", code:"KE", tag:"국적 대형항공사",
+      cabinKg:"10kg", cabinSize:"55×40×20cm · 삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"23kg", checkedSize:"1개 · 삼변 합 158cm 이내", checkedNote:"미주 노선은 2개까지",
+      extra:"일등석·프레스티지석은 기내 2개 총 18kg", link:"https://www.koreanair.com/contents/plan-your-travel/baggage/carry-on-baggage" },
+    { id:"oz", name:"아시아나항공", code:"OZ", tag:"국적 대형항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개(40×30×20cm)",
+      checkedKg:"23kg", checkedSize:"1개 · 삼변 합 158cm 이내", checkedNote:"미주 노선은 2개까지",
+      extra:"비즈니스석은 기내 2개(각 10kg) + 소지품 1개", link:"https://m.flyasiana.com/C/KR/KO/contents/carry-on-baggage" },
+    { id:"7c", name:"제주항공", code:"7C", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm · 가장 긴 변 55cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15kg", checkedSize:"1개 · 삼변 합 203cm 이내", checkedNote:"베이직 운임은 무료 위탁 없음",
+      extra:"국내선은 위탁 15kg 기준, 운임별로 다름", link:"https://www.jejuair.net/ko/linkService/boardingProcessGuide/cabinBaggage.do" },
+    { id:"lj", name:"진에어", code:"LJ", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15kg", checkedSize:"1개 · 삼변 합 203cm 이내", checkedNote:"괌 노선은 2개, 각 23kg",
+      extra:"노선별로 무료 허용량이 다르니 예약 내역 확인", link:"https://www.jinair.com/ready/baggage" },
+    { id:"tw", name:"트리니티항공 (구 티웨이)", code:"TW", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15~20kg", checkedSize:"1개 · 노선별 상이", checkedNote:"장거리 노선은 2개, 각 23kg",
+      extra:"2026년 9월 10일 사명 변경, 편명 코드 TW 유지", link:"https://www.trinityairways.com/" },
+    { id:"bx", name:"에어부산", code:"BX", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15kg", checkedSize:"1개 · 삼변 합 203cm 이내", checkedNote:"일부 노선 2개, 각 23kg",
+      extra:"특가 항공권은 무료 위탁이 빠질 수 있어요", link:"https://www.airbusan.com/content/individual/?content=serviceBaggageFree" },
+    { id:"rs", name:"에어서울", code:"RS", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15kg", checkedSize:"1개 · 삼변 합 203cm 이내", checkedNote:"일부 노선 2개, 각 23kg",
+      extra:"특가 운임은 무료 위탁 제외", link:"https://flyairseoul.com/CW/ko/customerServiceBaggage.do" },
+    { id:"ze", name:"이스타항공", code:"ZE", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15kg", checkedSize:"1개 · 삼변 합 203cm 이내", checkedNote:"할인 운임은 별도 구매",
+      extra:"국내선은 위탁 15kg 기준", link:"https://www.eastarjet.com/newstar/PGWHF00001" },
+    { id:"yp", name:"에어프레미아", code:"YP", tag:"국적 하이브리드",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"운임별", checkedSize:"이코노미 라이트는 무료 위탁 없음", checkedNote:"스탠다드 이상 1개 23kg",
+      extra:"운임 등급 차이가 큰 항공사라 예약 내역 확인이 필수", link:"https://www.airpremia.com/kr/ko/support/baggage/free" },
+    { id:"nh", name:"ANA (전일본공수)", code:"NH", tag:"외항 대형항공사",
+      cabinKg:"10kg", cabinSize:"55×40×25cm · 삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"23kg × 2개", checkedSize:"삼변 합 158cm 이내", checkedNote:"노선·등급별로 상이",
+      extra:"일본 국내선 소형기(100석 미만)는 기내 규정이 더 작아요", link:"https://www.ana.co.jp/ko/kr/travel-information/baggage-information/carry-on/" },
+    { id:"jl", name:"JAL (일본항공)", code:"JL", tag:"외항 대형항공사",
+      cabinKg:"10kg", cabinSize:"55×40×25cm · 삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"23kg × 2개", checkedSize:"삼변 합 203cm 이내", checkedNote:"이코노미 기준",
+      extra:"100석 미만 기종은 기내 수하물 크기 기준이 달라요", link:"https://www.jal.co.jp/kr/ko/inter/baggage/checked/" },
+    { id:"mm", name:"피치항공", code:"MM", tag:"외항 저비용항공사",
+      cabinKg:"7kg", cabinSize:"55×40×25cm (가방+소지품 합계)", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"유료", checkedSize:"20kg부터 옵션 구매", checkedNote:"무료 위탁 수하물 없음",
+      extra:"기내 7kg는 가방과 소지품을 합친 무게예요", link:"https://www.flypeach.com/kr/lm/ai/airports/baggage/carry_on_bag" },
+    { id:"ak", name:"에어아시아", code:"AK", tag:"외항 저비용항공사",
+      cabinKg:"7kg", cabinSize:"56×36×23cm", cabinCnt:"가방 1개 + 개인 소지품 1개(40×30×10cm)",
+      checkedKg:"유료", checkedSize:"15~30kg 옵션 구매", checkedNote:"무료 위탁 수하물 없음",
+      extra:"공항에서 사면 비싸니 예약 때 미리 구매하세요", link:"https://support.airasia.com/s/article/What-is-the-baggage-allowance" },
+    { id:"5j", name:"세부퍼시픽", code:"5J", tag:"외항 저비용항공사",
+      cabinKg:"7kg", cabinSize:"56×36×23cm", cabinCnt:"가방 1개 + 개인 소지품 1개(35×25×20cm)",
+      checkedKg:"유료", checkedSize:"20~40kg 옵션 구매", checkedNote:"무료 위탁 수하물 없음",
+      extra:"기내 7kg는 가방과 소지품을 합친 무게예요", link:"https://www.cebupacificair.com/en-PH/pages/travel-info/baggage-information" }
+  ];
+
+  const V = {
+    both:    { label:"기내 · 위탁 모두 OK", short:"모두 OK", c:"var(--v-both)",    bg:"var(--v-both-bg)",    line:"var(--v-both-line)" },
+    cabin:   { label:"기내만 가능",          short:"기내만",  c:"var(--v-cabin)",   bg:"var(--v-cabin-bg)",   line:"var(--v-cabin-line)" },
+    checked: { label:"위탁만 가능",          short:"위탁만",  c:"var(--v-checked)", bg:"var(--v-checked-bg)", line:"var(--v-checked-line)" },
+    cond:    { label:"조건부 가능",          short:"조건부",  c:"var(--v-cond)",    bg:"var(--v-cond-bg)",    line:"var(--v-cond-line)" },
+    ban:     { label:"둘 다 반입 금지",      short:"반입 금지", c:"var(--v-ban)",   bg:"var(--v-ban-bg)",     line:"var(--v-ban-line)" }
+  };
+
+  // v: 판정 · ox: [기내, 위탁] 한눈 표시(○ 가능 / △ 조건부 / ✕ 불가)
+  // dom: 국내선일 때 덮어쓰는 값 · calc: 용량 계산기 · k: 검색 보조어
+  const ITEMS = [
+    {n:"보조배터리", e:"🔋", c:"전자·배터리", v:"cabin", ox:"○✕", k:"파워뱅크 충전기 배터리팩 대용량", d:"위탁은 <em>절대 불가</em>. 100Wh 미만 5개, 100~160Wh는 카운터 승인 후 2개까지. 선반 보관·기내 충전 금지.", calc:"wh"},
+    {n:"노트북", e:"💻", c:"전자·배터리", v:"both", ox:"○○", k:"랩탑 맥북 그램 laptop", d:"기내 반입 권장. 보안검색 때 가방에서 꺼내야 하고, 위탁 시 파손 보상이 어려워요."},
+    {n:"태블릿 · 아이패드", e:"📱", c:"전자·배터리", v:"both", ox:"○○", k:"아이패드 갤탭 패드 tablet", d:"기내 반입 권장. 위탁할 경우 전원을 완전히 끄세요."},
+    {n:"스마트폰", e:"📲", c:"전자·배터리", v:"both", ox:"○○", k:"핸드폰 휴대폰 아이폰 갤럭시 폰", d:"기내 반입 권장. 위탁 시 전원을 완전히 꺼야 합니다."},
+    {n:"공기계 · 여분 휴대폰", e:"📵", c:"전자·배터리", v:"both", ox:"○○", k:"서브폰 예비폰 공기계", d:"여러 대도 가능하지만 기내 권장. 위탁 시 전원 완전 차단."},
+    {n:"디지털 카메라", e:"📷", c:"전자·배터리", v:"both", ox:"○○", k:"미러리스 dslr 캐논 니콘 소니 카메라", d:"본체는 둘 다 가능하나 기내 권장. <em>여분 배터리는 반드시 기내</em>로."},
+    {n:"여분 카메라 배터리", e:"🔌", c:"전자·배터리", v:"cabin", ox:"○✕", k:"예비배터리 리튬 배터리", d:"분리된 리튬 배터리는 위탁 금지. 단자를 테이프로 감싸 기내로."},
+    {n:"카메라 렌즈", e:"🔭", c:"전자·배터리", v:"both", ox:"○○", k:"렌즈 망원 단렌즈", d:"기내 권장. 충격에 약해 위탁 시 파손 위험이 큽니다."},
+    {n:"필름 카메라 · 필름", e:"🎞️", c:"전자·배터리", v:"both", ox:"○○", k:"필름 일회용카메라 코닥", d:"ISO 800 이상 고감도 필름은 X-ray 손상 우려가 있어 <em>육안 검사</em>를 요청하세요."},
+    {n:"액션캠 (고프로)", e:"🎥", c:"전자·배터리", v:"both", ox:"○○", k:"고프로 오즈모 액션캠", d:"본체는 둘 다 가능. 여분 배터리는 기내로 옮기세요."},
+    {n:"짐벌 · 스태빌라이저", e:"🎬", c:"전자·배터리", v:"cond", ox:"△○", k:"짐벌 오즈모 스태빌라이저", d:"배터리를 분리할 수 있으면 본체 위탁 + 배터리 기내. 일체형은 기내로."},
+    {n:"드론", e:"🛸", c:"전자·배터리", v:"cond", ox:"△△", k:"매빅 dji 무인기 드론", d:"본체는 기내 권장, <em>배터리는 반드시 분리해 기내</em>로. 목적지 국가의 반입·비행 허가도 확인하세요."},
+    {n:"전자담배 · 액상", e:"💨", c:"전자·배터리", v:"cabin", ox:"○✕", k:"아이코스 릴 베이프 쥴 액상 전담", d:"기기·액상 모두 위탁 금지. 배터리 100Wh 이하, 액상은 100ml 규정. 기내 흡연·충전 금지."},
+    {n:"무선 이어폰", e:"🎧", c:"전자·배터리", v:"both", ox:"○○", k:"에어팟 버즈 이어버드", d:"제한 없음. 케이스 배터리가 작아 자유롭게 반입할 수 있어요."},
+    {n:"헤드폰", e:"🎧", c:"전자·배터리", v:"both", ox:"○○", k:"헤드셋 노이즈캔슬링", d:"제한 없음. 부피가 커 기내 개인 소지품으로 들고 타는 편이 편해요."},
+    {n:"블루투스 스피커", e:"🔊", c:"전자·배터리", v:"both", ox:"○○", k:"스피커 jbl 마샬", d:"기내 권장. 위탁 시 전원을 완전히 끄세요."},
+    {n:"헤어드라이어", e:"🌬️", c:"전자·배터리", v:"both", ox:"○○", k:"드라이기 드라이어", d:"전기식은 둘 다 가능. 목적지 전압(110V/220V)을 확인하세요."},
+    {n:"전기 고데기", e:"➰", c:"전자·배터리", v:"both", ox:"○○", k:"헤어아이론 매직기 봉고데기 아이롱", d:"코드를 꽂아 쓰는 전기식은 둘 다 가능합니다."},
+    {n:"가스식 무선 고데기", e:"🔥", c:"전자·배터리", v:"cond", ox:"△✕", k:"무선고데기 가스 카트리지", d:"안전 커버를 씌운 <em>1개만 기내</em> 반입. 여분 가스 카트리지는 기내·위탁 모두 금지."},
+    {n:"전동칫솔", e:"🪥", c:"전자·배터리", v:"both", ox:"○○", k:"칫솔 오랄비 필립스", d:"제한 없음. 위탁 시 오작동을 막게 전원을 꺼 두세요."},
+    {n:"전기면도기", e:"🪒", c:"전자·배터리", v:"both", ox:"○○", k:"쉐이버 면도기 브라운", d:"날이 고정돼 있어 기내 반입 가능합니다."},
+    {n:"이발기 · 바리캉", e:"✂️", c:"전자·배터리", v:"both", ox:"○○", k:"바리캉 클리퍼 이발", d:"날이 고정된 전기 이발기는 기내 반입 가능합니다."},
+    {n:"충전기 · 어댑터", e:"🔌", c:"전자·배터리", v:"both", ox:"○○", k:"돼지코 충전기 어댑터 케이블 c타입", d:"제한 없음. 돼지코·변환 어댑터도 자유롭게 가져갈 수 있어요."},
+    {n:"멀티탭 · 연장선", e:"🔌", c:"전자·배터리", v:"both", ox:"○○", k:"멀티탭 연장선 콘센트", d:"제한 없음. 보안검색에서 따로 꺼내 보여달라 할 수 있어요."},
+    {n:"스마트워치", e:"⌚", c:"전자·배터리", v:"both", ox:"○○", k:"애플워치 갤럭시워치 워치 시계", d:"제한 없음. 기내 반입을 권합니다."},
+    {n:"스마트 반지 · 링", e:"💍", c:"전자·배터리", v:"both", ox:"○○", k:"갤럭시링 스마트링 오우라", d:"제한 없음. 착용한 채로 보안검색을 통과할 수 있어요."},
+    {n:"스마트 태그", e:"🏷️", c:"전자·배터리", v:"both", ox:"○○", k:"에어태그 스마트태그 위치추적", d:"에어태그·스마트태그는 제한 없음. 위탁 가방에 넣으면 분실 추적에 도움이 돼요."},
+    {n:"외장하드 · SSD", e:"💾", c:"전자·배터리", v:"both", ox:"○○", k:"외장하드 ssd 하드디스크", d:"기내 권장. 충격과 자기장에 약해 위탁은 피하세요."},
+    {n:"USB 메모리 · SD카드", e:"🗂️", c:"전자·배터리", v:"both", ox:"○○", k:"usb 메모리카드 sd카드", d:"제한 없음. 작아서 분실하기 쉬우니 기내 파우치에 넣어 두세요."},
+    {n:"키보드 · 마우스", e:"⌨️", c:"전자·배터리", v:"both", ox:"○○", k:"키보드 마우스 무선", d:"제한 없음. 무선 제품도 자유롭게 반입할 수 있어요."},
+    {n:"휴대용 게임기", e:"🎮", c:"전자·배터리", v:"both", ox:"○○", k:"닌텐도 스위치 스팀덱 게임기 psp", d:"기내 권장. 여분 배터리팩이 있다면 그것만 따로 기내로."},
+    {n:"VR 헤드셋", e:"🥽", c:"전자·배터리", v:"both", ox:"○○", k:"퀘스트 vr 메타 고글", d:"기내 권장. 렌즈가 약해 하드케이스에 넣으세요."},
+    {n:"e북 리더기", e:"📖", c:"전자·배터리", v:"both", ox:"○○", k:"킨들 크레마 리디북스 이북", d:"제한 없음. 기내에서 그대로 쓸 수 있어요."},
+    {n:"전자사전 · 계산기", e:"🧮", c:"전자·배터리", v:"both", ox:"○○", k:"계산기 전자사전 공학용", d:"제한 없음. 수험용 계산기도 자유롭게 반입됩니다."},
+    {n:"노트북 여분 배터리", e:"🔋", c:"전자·배터리", v:"cabin", ox:"○✕", k:"예비배터리 노트북배터리", d:"분리형 리튬 배터리는 위탁 금지. 단자를 절연해 기내로."},
+    {n:"노트북 파워뱅크 (160Wh 초과)", e:"⚡", c:"전자·배터리", v:"ban", ox:"✕✕", k:"대용량 파워뱅크 캠핑배터리 파워뱅크", d:"160Wh를 넘는 대용량 배터리는 기내·위탁 모두 반입 금지입니다."},
+    {n:"캠핑용 파워뱅크 · 발전기", e:"🔌", c:"전자·배터리", v:"ban", ox:"✕✕", k:"파워스테이션 캠핑배터리 인버터", d:"대부분 160Wh를 크게 넘어 운송이 거부됩니다. 현지 대여를 권해요."},
+    {n:"전동 공구 배터리", e:"🔋", c:"전자·배터리", v:"cabin", ox:"○✕", k:"드릴배터리 공구배터리", d:"분리해 기내로. 공구 본체는 위탁해야 합니다."},
+    {n:"삼각대", e:"📐", c:"전자·배터리", v:"cond", ox:"△○", k:"트라이포드 삼각대 거치대", d:"접었을 때 <em>60cm 이하</em>면 대체로 기내 가능. 길거나 봉이 굵으면 위탁하세요."},
+    {n:"셀카봉", e:"🤳", c:"전자·배터리", v:"checked", ox:"✕○", k:"셀피스틱 셀카봉", d:"둔기로 분류돼 기내 반입이 거절되는 경우가 많아요. 위탁을 권합니다."},
+    {n:"배터리 내장 캐리어", e:"🧳", c:"전자·배터리", v:"cond", ox:"△△", k:"스마트캐리어 전동캐리어", d:"<em>배터리를 분리할 수 있어야</em> 위탁 가능하고, 분리한 배터리는 기내로. 분리 불가 모델은 운송 거부."},
+    {n:"전동킥보드 · 호버보드", e:"🛴", c:"전자·배터리", v:"ban", ox:"✕✕", k:"전동휠 세그웨이 킥보드 전동스쿠터", d:"대용량 리튬배터리 탑재로 기내·위탁 모두 금지입니다."},
+    {n:"휴대용 선풍기", e:"🌀", c:"전자·배터리", v:"both", ox:"○○", k:"손선풍기 미니선풍기 탁상선풍기", d:"기내 권장. 배터리 분리형이면 배터리는 반드시 기내로 옮기세요."},
+    {n:"전기 손난로", e:"🔥", c:"전자·배터리", v:"cabin", ox:"○✕", k:"충전식 손난로 핫팩", d:"리튬배터리 내장이라 위탁 금지. 기내로 가져가세요."},
+    {n:"오일·연료식 손난로", e:"♨️", c:"전자·배터리", v:"ban", ox:"✕✕", k:"벤진 손난로 백금 손난로", d:"인화성 연료를 쓰는 제품은 기내·위탁 모두 금지입니다."},
+    {n:"일회용 핫팩", e:"🧣", c:"전자·배터리", v:"both", ox:"○○", k:"핫팩 발열팩 붙이는핫팩", d:"분말형 일회용 핫팩은 제한 없이 반입할 수 있어요."},
+    {n:"워키토키 · 무전기", e:"📻", c:"전자·배터리", v:"both", ox:"○○", k:"무전기 라디오 햄", d:"기내 사용은 금지. 국가에 따라 반입 허가가 필요할 수 있어요."},
+    {n:"태양광 충전기", e:"☀️", c:"전자·배터리", v:"cabin", ox:"○✕", k:"솔라 충전기 태양광패널", d:"배터리가 내장된 제품은 위탁 금지. 패널만 있는 제품은 둘 다 가능해요."},
+    {n:"소형 프린터 · 즉석카메라", e:"🖨️", c:"전자·배터리", v:"both", ox:"○○", k:"폴라로이드 인스탁스 포토프린터", d:"포토 프린터·폴라로이드 모두 가능. 필름은 X-ray 손상을 피해 기내로."},
+    {n:"조명 · LED 패널", e:"💡", c:"전자·배터리", v:"both", ox:"○○", k:"led 조명 룩스패드 링라이트", d:"촬영용 조명도 반입 가능. 배터리가 분리되면 배터리만 기내로."},
+    {n:"전기장판 · 미니 히터", e:"🔥", c:"전자·배터리", v:"both", ox:"○○", k:"전기요 온열매트 히터", d:"전기식은 반입 가능하지만 부피가 커 위탁이 편해요."},
+    {n:"스킨 · 로션", e:"🧴", c:"액체·화장품", v:"cond", ox:"△○", k:"토너 에센스 크림 화장품 스킨", d:"국제선은 <em>100ml 이하 용기</em>만, 1L 지퍼백 1개에. 큰 병은 위탁하세요.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"샴푸 · 린스 · 바디워시", e:"🧼", c:"액체·화장품", v:"cond", ox:"△○", k:"바디워시 컨디셔너 트리트먼트 세정", d:"국제선은 100ml 이하 용기만 기내. 여행용 공병에 덜어 담으세요.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"클렌징 오일 · 폼", e:"🫧", c:"액체·화장품", v:"cond", ox:"△○", k:"클렌징 폼클렌징 리무버 세안제", d:"국제선은 100ml 이하만 기내. 오일 제형도 액체류로 봅니다.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"향수", e:"🌸", c:"액체·화장품", v:"cond", ox:"△△", k:"퍼퓸 오드뚜왈렛 향수 프레그런스", d:"기내는 100ml 이하 용기만. 위탁은 <em>용기당 500ml·1인 총 2L</em>까지.", dom:{v:"cond", ox:"○△", d:"국내선 기내는 용량 제한이 없지만, 위탁은 용기당 500ml·총 2L 제한이 그대로예요."}},
+    {n:"선크림", e:"☀️", c:"액체·화장품", v:"cond", ox:"△○", k:"자외선차단제 선블록 썬크림", d:"국제선은 100ml 이하만 기내. 스틱형 고체 제형은 제한이 없어요.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"스프레이 선크림", e:"🫗", c:"액체·화장품", v:"cond", ox:"△△", k:"선스프레이 미스트 자외선", d:"에어로졸이라 용기당 500ml·총 2L 제한. 기내는 100ml 이하만 가능합니다."},
+    {n:"치약", e:"🦷", c:"액체·화장품", v:"cond", ox:"△○", k:"덴탈 구강 치약", d:"젤·크림 제형이라 액체류로 봅니다. 국제선은 100g 이하 튜브만 기내로.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"가글 · 구강청결제", e:"😬", c:"액체·화장품", v:"cond", ox:"△○", k:"리스테린 가그린 구강청결", d:"액체류입니다. 국제선은 100ml 이하 여행용만 기내로.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"쿠션 · 액체 파운데이션", e:"💄", c:"액체·화장품", v:"cond", ox:"△○", k:"파데 비비크림 메이크업 쿠션", d:"액체류로 분류됩니다. 국제선은 100ml 이하 용기만 지퍼백에.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"립스틱 · 고체 화장품", e:"💋", c:"액체·화장품", v:"both", ox:"○○", k:"립밤 팩트 아이섀도 고체 틴트", d:"고체 제형은 액체류가 아니라 용량 제한 없이 반입할 수 있어요."},
+    {n:"립글로스 · 틴트", e:"💋", c:"액체·화장품", v:"cond", ox:"△○", k:"글로스 틴트 립오일", d:"액체 제형은 100ml 규정 대상이지만 대부분 소용량이라 지퍼백에 넣으면 통과돼요."},
+    {n:"마스카라 · 아이라이너", e:"👁️", c:"액체·화장품", v:"cond", ox:"△○", k:"마스카라 아이라이너 속눈썹", d:"액체류지만 소용량이라 지퍼백에 함께 넣으면 기내 반입 가능합니다."},
+    {n:"앰플 · 세럼 · 에센스", e:"💧", c:"액체·화장품", v:"cond", ox:"△○", k:"세럼 앰플 에센스 부스터", d:"국제선은 100ml 이하만 기내. 앰플은 개수가 많으면 지퍼백 용량을 넘기기 쉬워요.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"마스크팩 · 시트팩", e:"🧖", c:"액체·화장품", v:"cond", ox:"△○", k:"팩 시트팩 마스크팩", d:"에센스가 든 시트팩은 액체류로 봅니다. 장수가 많으면 위탁하세요.", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"미스트 · 스프레이 화장품", e:"💦", c:"액체·화장품", v:"cond", ox:"△○", k:"미스트 페이스미스트 토너스프레이", d:"100ml 이하만 기내. 분사형은 잠금장치가 있어야 합니다.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"헤어에센스 · 오일", e:"💇", c:"액체·화장품", v:"cond", ox:"△○", k:"헤어오일 에센스 아르간", d:"국제선은 100ml 이하만 기내. 오일도 액체류입니다.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"헤어 왁스 · 젤 · 포마드", e:"💈", c:"액체·화장품", v:"cond", ox:"△○", k:"포마드 왁스 젤 헤어제품", d:"젤·크림 제형은 액체류입니다. 국제선은 100g 이하만 기내로.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"헤어스프레이 · 무스", e:"🫧", c:"액체·화장품", v:"cond", ox:"△△", k:"스프레이 무스 세팅스프레이 에어로졸", d:"에어로졸은 <em>용기당 500ml, 1인 총 2L</em>까지. 기내는 100ml 이하만, 잠금장치 필수."},
+    {n:"데오드란트 (스틱)", e:"🧴", c:"액체·화장품", v:"both", ox:"○○", k:"데오드란트 데오 스틱", d:"고체 스틱형은 제한 없이 반입 가능합니다."},
+    {n:"데오드란트 (스프레이)", e:"🌬️", c:"액체·화장품", v:"cond", ox:"△△", k:"데오 스프레이 땀냄새", d:"에어로졸이라 용기당 500ml·총 2L 제한. 기내는 100ml 이하만."},
+    {n:"바디로션 · 핸드크림", e:"🤲", c:"액체·화장품", v:"cond", ox:"△○", k:"바디로션 핸드크림 보습", d:"국제선은 100ml 이하만 기내. 핸드크림은 대부분 소용량이라 통과됩니다.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"매니큐어", e:"💅", c:"액체·화장품", v:"cond", ox:"△△", k:"네일 폴리시 젤네일 매니큐어", d:"인화성이라 <em>용기당 100ml 이하, 1인 총 2kg</em>까지. 지퍼백 규정도 적용됩니다."},
+    {n:"네일 리무버", e:"🧪", c:"액체·화장품", v:"cond", ox:"△△", k:"아세톤 리무버 네일", d:"인화성 액체입니다. 100ml 이하만 지퍼백에 넣어 기내, 대용량은 운송 불가."},
+    {n:"셰이빙 폼 · 애프터셰이브", e:"🪒", c:"액체·화장품", v:"cond", ox:"△○", k:"쉐이빙폼 면도크림 스킨로션", d:"에어로졸·액체 규정을 함께 따릅니다. 기내는 100ml 이하만."},
+    {n:"콘택트렌즈 세정액", e:"👁️", c:"액체·화장품", v:"cond", ox:"△○", k:"렌즈액 식염수 렌즈세정", d:"국제선은 100ml 이하만 기내. 의료 목적이면 초과 반입이 가능하지만 설명이 필요해요.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"손소독제", e:"🧴", c:"액체·화장품", v:"cond", ox:"△△", k:"손소독 알콜 겔 세니타이저", d:"알코올이 들어 있어 기내는 100ml 이하만. 위탁은 용기당 500ml·총 2L까지."},
+    {n:"물티슈", e:"🧻", c:"액체·화장품", v:"both", ox:"○○", k:"물티슈 클렌징티슈 위생", d:"액체류로 보지 않아 용량 제한 없이 반입할 수 있어요."},
+    {n:"세탁세제 · 섬유유연제", e:"🧺", c:"액체·화장품", v:"cond", ox:"△○", k:"세제 다우니 섬유유연제 빨래", d:"액체는 100ml 규정 대상. 시트형·분말형은 제한이 없어요."},
+    {n:"주방세제 · 세정제", e:"🧽", c:"액체·화장품", v:"cond", ox:"△○", k:"주방세제 퐁퐁 클리너", d:"일반 주방세제는 액체류 규정만 따릅니다. 독성·부식성 세정제는 금지예요."},
+    {n:"향초 · 캔들", e:"🕯️", c:"액체·화장품", v:"both", ox:"○○", k:"양초 캔들 아로마캔들", d:"고체 파라핀 양초는 반입 가능. 젤 캔들은 액체류로 분류됩니다."},
+    {n:"디퓨저 · 룸스프레이", e:"🌿", c:"액체·화장품", v:"cond", ox:"△△", k:"디퓨저 방향제 룸스프레이", d:"알코올이 든 액체라 기내는 100ml 이하만, 위탁은 총 2L 제한을 받아요."},
+    {n:"생수 · 음료", e:"🥤", c:"액체·화장품", v:"cond", ox:"△○", k:"물 커피 주스 음료 텀블러", d:"보안검색 <em>이후</em> 구입한 것만 기내 반입 가능. 빈 텀블러는 통과됩니다.", dom:{v:"both", ox:"○○", d:"국내선은 검색대 전에 산 음료도 기내 반입이 가능합니다."}},
+    {n:"주류 (술)", e:"🍶", c:"액체·화장품", v:"cond", ox:"△△", k:"소주 와인 위스키 맥주 알코올 술", d:"알코올 24% 이하는 위탁 제한 없음, 24~70%는 <em>1인 5L</em>까지, 70% 초과는 금지. 기내는 면세 STEB만."},
+    {n:"면세점 액체 (STEB)", e:"🛍️", c:"액체·화장품", v:"cond", ox:"△○", k:"면세품 봉투 스텝 면세", d:"영수증과 함께 <em>밀봉된 STEB 봉투</em>여야 기내 반입 가능. 환승 전에 뜯으면 압수될 수 있어요."},
+    {n:"김치", e:"🥬", c:"식품", v:"checked", ox:"✕○", k:"김치 반찬 절임 깍두기", d:"국물이 있어 액체류로 봅니다. <em>밀봉 후 위탁</em>이 정석이고 진공포장 + 지퍼백 이중 포장을 권해요.", dom:{v:"cond", ox:"△○", d:"국내선은 밀봉만 잘 하면 기내도 가능하지만 냄새·누출 때문에 위탁을 권해요."}},
+    {n:"고추장 · 된장 · 쌈장", e:"🍲", c:"식품", v:"checked", ox:"✕○", k:"장류 소스 고추장 된장 쌈장", d:"점성이 있어 액체류로 분류됩니다. 100ml를 넘으면 위탁하세요.", dom:{v:"cond", ox:"△○", d:"국내선은 용량 제한이 없어 기내도 가능하지만 누출 위험이 있어요."}},
+    {n:"참기름 · 들기름 · 식용유", e:"🫒", c:"식품", v:"checked", ox:"✕○", k:"기름 참기름 들기름 올리브유", d:"액체라 국제선 기내는 100ml 이하만. 깨질 위험이 커 완충 포장 후 위탁하세요.", dom:{v:"cond", ox:"△○", d:"국내선은 기내도 가능하지만 유리병은 완충 포장이 필요해요."}},
+    {n:"젓갈 · 액젓", e:"🦐", c:"식품", v:"checked", ox:"✕○", k:"젓갈 액젓 새우젓 멸치액젓", d:"액체이자 냄새가 강해 위탁이 원칙. 밀봉 + 이중 포장을 권합니다."},
+    {n:"꿀 · 잼 · 시럽", e:"🍯", c:"식품", v:"cond", ox:"△○", k:"꿀 잼 시럽 메이플", d:"점성 액체로 분류됩니다. 국제선 기내는 100ml 이하만, 나머지는 위탁하세요.", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"고춧가루 · 조미료", e:"🌶️", c:"식품", v:"both", ox:"○○", k:"고춧가루 소금 설탕 조미료 향신료", d:"분말은 제한 없음. 다만 350ml를 넘는 분말은 미국행 노선에서 추가 검사를 받을 수 있어요."},
+    {n:"라면 · 컵라면", e:"🍜", c:"식품", v:"both", ox:"○○", k:"라면 컵라면 신라면 즉석", d:"제한 없음. 다만 일부 국가는 <em>육류 스프</em>가 든 라면의 반입을 금지합니다."},
+    {n:"과자 · 스낵", e:"🍪", c:"식품", v:"both", ox:"○○", k:"과자 스낵 감자칩 간식", d:"제한 없음. 기압 때문에 봉지가 부풀 수 있지만 문제는 없어요."},
+    {n:"초콜릿 · 젤리 · 사탕", e:"🍫", c:"식품", v:"both", ox:"○○", k:"초콜릿 젤리 사탕 캔디 디저트", d:"제한 없음. 리큐어가 든 초콜릿은 액체류로 볼 수 있어요."},
+    {n:"커피 · 차 · 티백", e:"☕", c:"식품", v:"both", ox:"○○", k:"원두 녹차 티백 커피믹스 분말", d:"제한 없음. 분말류는 보안검색에서 추가 확인을 요청받을 수 있어요."},
+    {n:"건어물 · 마른안주", e:"🐟", c:"식품", v:"both", ox:"○○", k:"오징어 멸치 쥐포 건어물 마른안주", d:"국내선은 자유, 국제선은 <em>도착 국가 검역</em>을 확인하세요. 냄새 때문에 밀봉을 권합니다."},
+    {n:"김 · 조미김", e:"🍙", c:"식품", v:"both", ox:"○○", k:"김 조미김 김자반", d:"제한 없음. 선물용으로 가장 무난한 품목이에요."},
+    {n:"견과류", e:"🥜", c:"식품", v:"both", ox:"○○", k:"아몬드 땅콩 호두 견과", d:"제한 없음. 일부 국가는 껍질이 있는 생견과를 검역 대상으로 봅니다."},
+    {n:"즉석밥 · 즉석국", e:"🍚", c:"식품", v:"cond", ox:"△○", k:"햇반 즉석밥 즉석국 레토르트", d:"즉석밥은 제한 없음. 국·탕 같은 액체 파우치는 100ml 규정을 받아요.", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"통조림 · 참치캔", e:"🥫", c:"식품", v:"cond", ox:"△○", k:"통조림 참치캔 스팸 캔", d:"내용물이 국물이면 액체류. 기내는 100ml 이하만 가능하고 보통은 위탁합니다.", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"빵 · 샌드위치 · 김밥", e:"🥪", c:"식품", v:"both", ox:"○○", k:"빵 김밥 샌드위치 도시락", d:"반입은 자유롭지만 상하기 쉬워요. 육류가 든 것은 국제선 검역 대상입니다."},
+    {n:"떡 · 한과", e:"🍡", c:"식품", v:"both", ox:"○○", k:"떡 한과 약과 인절미", d:"제한 없음. 국제선은 육류·유제품이 든 떡인지만 확인하세요."},
+    {n:"홍삼액 · 건강 앰플", e:"💊", c:"식품", v:"cond", ox:"△○", k:"홍삼 스틱 앰플 엑기스 진액", d:"파우치도 액체류입니다. 국제선 기내는 개별 100ml 이하만.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"비타민 · 영양제", e:"💊", c:"식품", v:"both", ox:"○○", k:"비타민 영양제 유산균 오메가", d:"알약·캡슐은 제한 없음. 액상 영양제는 액체류 규정을 받습니다."},
+    {n:"프로틴 파우더", e:"🥛", c:"식품", v:"both", ox:"○○", k:"단백질 보충제 프로틴 분말", d:"분말은 반입 가능하지만, 미국행은 350ml 초과 분말에 추가 검사가 붙습니다."},
+    {n:"우유 · 요거트 · 두유", e:"🥛", c:"식품", v:"cond", ox:"△○", k:"우유 요거트 두유 유제품", d:"액체류입니다. 국제선 기내는 100ml 이하만, 유제품은 검역 제한도 확인하세요.", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"치즈", e:"🧀", c:"식품", v:"cond", ox:"△△", k:"치즈 유제품 까망베르", d:"경성 치즈는 대체로 가능하지만 연성 치즈는 액체로 보고, 국가별 유제품 검역도 걸립니다."},
+    {n:"신선 과일 · 채소", e:"🍎", c:"식품", v:"cond", ox:"△△", k:"과일 야채 농산물 검역 사과 바나나", d:"보안보다 <em>검역</em>이 문제예요. 호주·뉴질랜드·미국 등은 대부분 금지이고 미신고 시 벌금이 큽니다."},
+    {n:"육류 · 소시지 · 육포", e:"🥩", c:"식품", v:"cond", ox:"△△", k:"고기 소시지 육포 햄 축산물", d:"대부분의 국가가 축산물 반입을 금지합니다. 진공포장·통조림도 예외가 아닌 경우가 많아요."},
+    {n:"생선 · 수산물", e:"🐠", c:"식품", v:"cond", ox:"△△", k:"회 생선 수산물 냉동 해산물", d:"냉장·냉동 수산물은 검역 대상이며 아이스팩 규정도 함께 받습니다. 위탁이 원칙이에요."},
+    {n:"냉동식품 · 아이스크림", e:"🍦", c:"식품", v:"cond", ox:"△△", k:"냉동 아이스크림 보냉", d:"보냉이 필요해 사실상 장거리 운송이 어려워요. 드라이아이스는 별도 신고 대상입니다."},
+    {n:"분유 · 이유식", e:"🍼", c:"식품", v:"cond", ox:"○○", k:"분유 이유식 아기 모유 유아식", d:"동반 유아가 있으면 <em>비행 중 필요한 양</em>은 100ml를 넘어도 기내 반입 가능. 검색대에서 미리 알려주세요."},
+    {n:"반려동물 사료", e:"🐾", c:"식품", v:"both", ox:"○○", k:"사료 펫푸드 강아지사료 간식", d:"건사료는 대체로 가능. 육류가 든 습식 사료는 검역에 걸릴 수 있어요."},
+    {n:"종자 · 모종 · 식물", e:"🌱", c:"식품", v:"cond", ox:"△△", k:"씨앗 종자 화분 모종 식물", d:"거의 모든 국가가 검역 신고 대상으로 지정합니다. 무신고 반입은 벌금이 큽니다."},
+    {n:"과도 · 주방칼", e:"🔪", c:"날붙이·공구", v:"checked", ox:"✕○", k:"칼 나이프 식칼 과도 부엌칼", d:"기내 반입 금지. 날을 감싸 포장한 뒤 위탁하세요."},
+    {n:"맥가이버칼 · 멀티툴", e:"🛠️", c:"날붙이·공구", v:"checked", ox:"✕○", k:"맥가이버 멀티툴 스위스아미 레더맨", d:"칼날이 없어도 기내 반입이 거절되는 경우가 많아요. 무조건 위탁하세요."},
+    {n:"캠핑 나이프 · 사냥칼", e:"🗡️", c:"날붙이·공구", v:"checked", ox:"✕○", k:"캠핑칼 사냥칼 나이프 단검", d:"기내 반입 금지. 케이스에 넣어 위탁하고 도착지 법령도 확인하세요."},
+    {n:"가위", e:"✂️", c:"날붙이·공구", v:"cond", ox:"△○", k:"가위 쪽가위 손톱가위 문구", d:"날 길이 <em>6cm 이하</em>면 기내 반입 가능. 그보다 길면 위탁해야 합니다."},
+    {n:"손톱깎이", e:"💅", c:"날붙이·공구", v:"both", ox:"○○", k:"네일클리퍼 손톱깎이 손톱", d:"일반 크기는 기내 가능. 줄이 길거나 칼날이 달린 제품은 거절될 수 있어요."},
+    {n:"커터칼 · 아트나이프", e:"📏", c:"날붙이·공구", v:"checked", ox:"✕○", k:"커터칼 문구용칼 아트나이프 칼날", d:"날 길이와 관계없이 기내 반입 금지입니다."},
+    {n:"일회용 면도기", e:"🪒", c:"날붙이·공구", v:"both", ox:"○○", k:"면도기 카트리지 질레트 쉐이버", d:"날이 헤드에 고정된 카트리지형은 기내 가능합니다."},
+    {n:"양날 면도날", e:"⚔️", c:"날붙이·공구", v:"checked", ox:"✕○", k:"면도날 클래식 데이쉐이브 양날", d:"날만 분리되는 형태는 기내 반입 금지. 위탁하세요."},
+    {n:"족집게 · 눈썹칼", e:"🧷", c:"날붙이·공구", v:"cond", ox:"△○", k:"핀셋 족집게 눈썹칼 눈썹정리", d:"족집게는 대체로 기내 가능하지만, 날이 있는 눈썹칼은 위탁을 권합니다."},
+    {n:"바늘 · 실 · 자수바늘", e:"🧵", c:"날붙이·공구", v:"cond", ox:"△○", k:"바늘 실 반짇고리 자수", d:"봉제용 바늘은 대체로 기내 가능하지만 보안요원 재량입니다."},
+    {n:"뜨개바늘 · 코바늘", e:"🧶", c:"날붙이·공구", v:"cond", ox:"△○", k:"니들 편물 뜨개 코바늘", d:"항공사·공항 재량으로 갈립니다. 끝이 뭉툭한 것만 기내에 넣으세요."},
+    {n:"드라이버 · 펜치 · 렌치", e:"🔧", c:"날붙이·공구", v:"checked", ox:"✕○", k:"공구 드라이버 스패너 렌치 펜치", d:"공구류는 기내 반입 금지. 길이와 상관없이 위탁해야 합니다."},
+    {n:"망치 · 전동드릴 · 톱", e:"🔨", c:"날붙이·공구", v:"checked", ox:"✕○", k:"망치 드릴 톱 전동공구", d:"둔기·공구류로 기내 금지. 전동공구는 배터리를 분리해 기내로 옮기세요."},
+    {n:"못 · 나사 · 압정", e:"📌", c:"날붙이·공구", v:"checked", ox:"✕○", k:"못 나사 압정 볼트", d:"작아도 뾰족한 금속류라 위탁이 원칙입니다."},
+    {n:"스테이플러", e:"📎", c:"날붙이·공구", v:"both", ox:"○○", k:"스테이플러 호치키스 클립", d:"일반 사무용 스테이플러와 심은 기내 반입 가능합니다."},
+    {n:"줄자 · 자", e:"📐", c:"날붙이·공구", v:"both", ox:"○○", k:"줄자 자 측정", d:"일반 줄자는 제한 없음. 금속 장척은 둔기로 볼 수 있어요."},
+    {n:"조각도 · 끌 · 정", e:"🪚", c:"날붙이·공구", v:"checked", ox:"✕○", k:"조각도 끌 정 목공", d:"날붙이로 분류돼 기내 반입 금지입니다."},
+    {n:"얼음송곳 · 송곳", e:"🧊", c:"날붙이·공구", v:"checked", ox:"✕○", k:"송곳 아이스픽 피크", d:"뾰족한 도구는 기내 반입 금지. 케이스에 넣어 위탁하세요."},
+    {n:"유리칼 · 페인트 나이프", e:"🪟", c:"날붙이·공구", v:"checked", ox:"✕○", k:"유리칼 페인트나이프 스크레이퍼", d:"날이 있는 공구는 기내 금지. 위탁하세요."},
+    {n:"삼단봉 · 호신용품", e:"🥢", c:"날붙이·공구", v:"checked", ox:"✕○", k:"경봉 삼단봉 너클 호신", d:"기내 금지이며 국가에 따라 위탁도 불법일 수 있어요. 도착지 법령을 꼭 확인하세요."},
+    {n:"아이스팩 (젤형)", e:"🧊", c:"날붙이·공구", v:"cond", ox:"△○", k:"보냉팩 젤팩 쿨팩 아이스팩", d:"젤 아이스팩은 액체로 봅니다. <em>완전히 언 상태</em>면 통과되기도 하지만 녹으면 100ml 규정이 적용돼요."},
+    {n:"장우산", e:"☂️", c:"날붙이·공구", v:"checked", ox:"✕○", k:"우산 긴우산 장우산", d:"끝이 뾰족한 장우산은 둔기로 보아 위탁을 요구하는 경우가 많아요."},
+    {n:"3단 접이식 우산", e:"🌂", c:"날붙이·공구", v:"both", ox:"○○", k:"우산 접이식 3단우산", d:"제한 없음. 기내에 그대로 들고 탈 수 있어요."},
+    {n:"케이블타이 · 노끈", e:"🪢", c:"날붙이·공구", v:"both", ox:"○○", k:"케이블타이 노끈 로프 끈", d:"일반 포장용은 제한 없음. 구속용으로 쓰이는 대형 타이는 거절될 수 있어요."},
+    {n:"야구배트 · 방망이", e:"⚾", c:"스포츠·레저", v:"checked", ox:"✕○", k:"배트 야구 방망이", d:"둔기로 분류돼 기내 반입 금지. 대형 수하물 접수대를 이용하세요."},
+    {n:"골프채 · 골프백", e:"⛳", c:"스포츠·레저", v:"checked", ox:"✕○", k:"골프백 클럽 골프채 골프", d:"기내 금지. 대부분 위탁 1개를 정규 수하물로 인정하지만 사전 신청을 권합니다."},
+    {n:"골프공 · 골프티", e:"🏌️", c:"스포츠·레저", v:"both", ox:"○○", k:"골프공 골프티 볼", d:"공과 티는 기내 반입 가능. 개수가 많으면 무게를 확인하세요."},
+    {n:"테니스 · 배드민턴 라켓", e:"🎾", c:"스포츠·레저", v:"checked", ox:"✕○", k:"라켓 테니스 배드민턴 스쿼시", d:"라켓류는 둔기로 보아 기내 반입이 거절되는 경우가 많아요."},
+    {n:"탁구 라켓", e:"🏓", c:"스포츠·레저", v:"both", ox:"○○", k:"탁구 라켓 핑퐁", d:"작아서 기내 반입이 가능한 편이지만 공항 재량입니다."},
+    {n:"축구공 · 농구공", e:"⚽", c:"스포츠·레저", v:"cond", ox:"△○", k:"축구공 농구공 배구공 볼", d:"바람을 <em>빼서</em> 넣는 것이 안전해요. 압력 때문에 터질 수 있습니다."},
+    {n:"볼링공", e:"🎳", c:"스포츠·레저", v:"checked", ox:"✕○", k:"볼링공 볼링", d:"무겁고 단단해 위탁 전용. 전용 케이스가 필요합니다."},
+    {n:"당구 큐대", e:"🎱", c:"스포츠·레저", v:"checked", ox:"✕○", k:"당구 큐대 포켓볼", d:"긴 봉 형태라 기내 금지. 하드케이스에 넣어 위탁하세요."},
+    {n:"등산 스틱 · 아이젠", e:"🥾", c:"스포츠·레저", v:"checked", ox:"✕○", k:"트레킹폴 스틱 하이킹 아이젠 피켈", d:"뾰족한 금속이라 기내 반입 금지. 위탁하세요."},
+    {n:"등산 배낭", e:"🎒", c:"스포츠·레저", v:"both", ox:"○○", k:"백팩 등산가방 배낭", d:"규격 안이면 기내, 크면 위탁. 스틱·아이젠은 반드시 빼서 위탁하세요."},
+    {n:"텐트 · 캠핑 장비", e:"⛺", c:"스포츠·레저", v:"cond", ox:"✕○", k:"텐트 캠핑 타프 폴대", d:"텐트 천과 폴은 위탁 가능. <em>팩(펙)과 망치, 가스는 위탁 또는 금지</em>입니다."},
+    {n:"스키 · 스노보드", e:"🎿", c:"스포츠·레저", v:"checked", ox:"✕○", k:"보드 스키 스노보드 장비", d:"위탁 전용. 대형 수하물로 사전 신청이 필요하고 추가 요금이 붙을 수 있어요."},
+    {n:"스케이트보드 · 인라인", e:"🛹", c:"스포츠·레저", v:"checked", ox:"✕○", k:"스케이트보드 인라인 롤러", d:"바퀴 달린 보드류는 기내 금지. 위탁하세요."},
+    {n:"아이스 스케이트", e:"⛸️", c:"스포츠·레저", v:"checked", ox:"✕○", k:"스케이트 피겨 하키", d:"날이 있어 기내 반입 금지. 날 보호대를 씌워 위탁하세요."},
+    {n:"헬멧 · 보호대", e:"🪖", c:"스포츠·레저", v:"both", ox:"○○", k:"헬멧 보호대 무릎보호대", d:"제한 없음. 부피 때문에 위탁이 편하지만 기내에 들고 탈 수도 있어요."},
+    {n:"다트 · 화살 · 활", e:"🎯", c:"스포츠·레저", v:"checked", ox:"✕○", k:"다트핀 양궁 화살 활 석궁", d:"뾰족한 물체는 기내 금지. 활·석궁도 위탁 전용입니다."},
+    {n:"낚싯대 · 낚시바늘", e:"🎣", c:"스포츠·레저", v:"checked", ox:"✕○", k:"낚시 릴 바늘 낚싯대", d:"낚싯대와 바늘 모두 기내 금지. 하드케이스에 넣어 위탁하세요."},
+    {n:"요가매트", e:"🧘", c:"스포츠·레저", v:"both", ox:"○○", k:"매트 필라테스 요가", d:"크기만 맞으면 기내 가능하지만 부피 때문에 위탁이 편해요."},
+    {n:"아령 · 케틀벨", e:"🏋️", c:"스포츠·레저", v:"checked", ox:"✕○", k:"덤벨 아령 케틀벨 운동기구", d:"둔기이자 중량물이라 위탁만 가능. 무게 초과 요금에 주의하세요."},
+    {n:"서핑보드 · 패들보드", e:"🏄", c:"스포츠·레저", v:"checked", ox:"✕○", k:"서핑 보드 패들 sup", d:"대형 위탁 수하물. 길이 제한과 추가 요금이 있어 사전 신청이 필수예요."},
+    {n:"스노클 · 오리발", e:"🤿", c:"스포츠·레저", v:"both", ox:"○○", k:"스노클 오리발 핀 마스크", d:"제한 없음. 부피가 커 위탁이 편합니다."},
+    {n:"스쿠버 산소통", e:"🫧", c:"스포츠·레저", v:"cond", ox:"✕△", k:"다이빙 탱크 실린더 스쿠버", d:"<em>밸브를 열어 완전히 빈 상태</em>만 위탁 가능. 압력이 남아 있으면 운송 거부됩니다."},
+    {n:"자전거", e:"🚲", c:"스포츠·레저", v:"checked", ox:"✕○", k:"바이크 자전거 접이식 로드", d:"분해·포장 후 위탁. 전기자전거는 배터리 용량 때문에 대부분 운송이 거부돼요."},
+    {n:"죽도 · 목검 · 보호구", e:"🥋", c:"스포츠·레저", v:"checked", ox:"✕○", k:"죽도 목검 검도 태권도 도복", d:"둔기로 분류돼 기내 금지. 도복과 보호구는 기내도 가능합니다."},
+    {n:"에어소프트건 · BB탄총", e:"🔫", c:"스포츠·레저", v:"checked", ox:"✕○", k:"비비탄 서바이벌 모의총 에어건", d:"모양이 총기라 기내 절대 금지. 신고 후 위탁해야 하고 국가별로 불법일 수 있어요."},
+    {n:"패러글라이딩 · 낙하산", e:"🪂", c:"스포츠·레저", v:"cond", ox:"✕○", k:"패러글라이딩 낙하산 행글라이더", d:"장비 자체는 위탁 가능하지만 압축가스 부품이 있으면 사전 신고가 필요합니다."},
+    {n:"처방약 · 알약", e:"💊", c:"의약·의료", v:"both", ox:"○○", k:"약 상비약 처방약 알약", d:"기내 반입을 권합니다. 위탁 짐이 늦게 나올 때를 대비해 <em>복용분은 손가방</em>에."},
+    {n:"감기약 · 진통제", e:"💊", c:"의약·의료", v:"both", ox:"○○", k:"타이레놀 진통제 감기약 해열제", d:"일반 의약품은 제한 없음. 일부 국가는 코데인·슈도에페드린 성분을 규제합니다."},
+    {n:"물약 · 시럽", e:"🧪", c:"의약·의료", v:"cond", ox:"△○", k:"시럽 물약 소아약 기침약", d:"의료 목적이면 100ml를 넘어도 기내 반입 가능. <em>처방전이나 약봉투</em>를 함께 보여주세요."},
+    {n:"연고 · 파스 · 밴드", e:"🩹", c:"의약·의료", v:"cond", ox:"△○", k:"연고 파스 밴드 반창고 상처", d:"기본은 액체류 규정이지만, 처방 의약품이면 필요량 초과 반입이 가능합니다.", calc:"ml", dom:{v:"both", ox:"○○", d:"국내선은 용량 제한 없이 기내 반입 가능합니다."}},
+    {n:"안약 · 인공눈물", e:"👁️", c:"의약·의료", v:"cond", ox:"△○", k:"안약 인공눈물 점안액", d:"소용량이라 지퍼백에 넣으면 기내 가능. 처방 안약은 초과 반입도 허용됩니다."},
+    {n:"소독약 · 알코올 솜", e:"🧴", c:"의약·의료", v:"cond", ox:"△○", k:"소독약 과산화수소 알콜솜 포비돈", d:"소독용 알코올은 인화성이라 소량만. 개별 포장 알코올 솜은 제한이 없어요."},
+    {n:"인슐린 · 주사기", e:"💉", c:"의약·의료", v:"cond", ox:"△○", k:"주사 인슐린 자가주사 펜 주사기", d:"처방전·소견서를 지참하면 기내 반입 가능. 온도 관리가 필요하면 항공사에 미리 알리세요."},
+    {n:"혈당측정기 · 혈압계", e:"🩺", c:"의약·의료", v:"both", ox:"○○", k:"혈당 혈압계 측정기 의료기기", d:"의료기기는 제한 없음. 기내 반입을 권하고 바늘은 별도 케이스에 넣으세요."},
+    {n:"네블라이저 · 호흡보조기", e:"😮‍💨", c:"의약·의료", v:"both", ox:"○○", k:"네블라이저 흡입기 천식 호흡기", d:"의료기기는 수하물 개수에 포함되지 않는 경우가 많아요. 기내 사용은 사전 문의가 필요합니다."},
+    {n:"CPAP · 수면 무호흡기", e:"🛏️", c:"의약·의료", v:"cond", ox:"○○", k:"cpap 양압기 수면무호흡", d:"기내 반입 가능하며 대부분 수하물 개수에서 제외돼요. 기내 사용은 사전 승인이 필요합니다."},
+    {n:"수은 체온계", e:"🌡️", c:"의약·의료", v:"cond", ox:"△✕", k:"체온계 온도계 수은", d:"보호 케이스에 넣은 <em>1개</em>만 기내 반입 가능. 전자식은 제한이 없어요."},
+    {n:"휴대용 산소통", e:"🫁", c:"의약·의료", v:"cond", ox:"△✕", k:"산소 호흡기 산소통", d:"항공사 <em>사전 승인</em>이 필요합니다. 기종별로 허용 모델이 정해져 있어요."},
+    {n:"콘택트렌즈 · 안경", e:"👓", c:"의약·의료", v:"both", ox:"○○", k:"안경 렌즈 콘택트 선글라스", d:"제한 없음. 렌즈 보존액만 액체류 규정을 받습니다."},
+    {n:"보청기 · 인공와우", e:"👂", c:"의약·의료", v:"both", ox:"○○", k:"보청기 인공와우 청각", d:"착용한 채로 보안검색을 통과할 수 있고 수하물 개수에도 포함되지 않아요."},
+    {n:"목발 · 보조기", e:"🩼", c:"의약·의료", v:"cond", ox:"△○", k:"목발 보조기 깁스 보행기", d:"무료로 운송되며 수하물 개수에 포함되지 않아요. 기내 보관은 승무원에게 문의하세요."},
+    {n:"휠체어", e:"♿", c:"의약·의료", v:"cond", ox:"△○", k:"휠체어 전동휠체어 보행보조", d:"무료 운송이며 개수에 포함되지 않아요. 전동 휠체어는 <em>배터리 종류를 사전 신고</em>해야 합니다."},
+    {n:"생리대 · 탐폰", e:"🩸", c:"의약·의료", v:"both", ox:"○○", k:"생리대 탐폰 위생용품 여성용품", d:"제한 없음. 액체류로 보지 않습니다."},
+    {n:"CBD 오일 · 대마 성분 제품", e:"🚫", c:"의약·의료", v:"ban", ox:"✕✕", k:"cbd 대마 헴프 마리화나", d:"한국을 포함한 여러 나라에서 <em>불법</em>입니다. 해외에서 합법이라도 국내 반입은 처벌 대상이에요."},
+    {n:"라이터", e:"🔥", c:"위험물", v:"cabin", ox:"○✕", k:"라이터 지포 토치 일회용라이터", d:"<em>1인당 1개</em>만 몸에 지녀 기내로. 위탁은 금지이며 토치·권총형 라이터는 아예 반입 불가."},
+    {n:"전자 라이터 (USB 충전식)", e:"⚡", c:"위험물", v:"cabin", ox:"○✕", k:"usb라이터 전기라이터 플라즈마", d:"배터리 내장이라 위탁 금지. 1개만 몸에 지녀 기내로 가져가세요."},
+    {n:"안전성냥", e:"🕯️", c:"위험물", v:"cabin", ox:"○✕", k:"성냥 매치 안전성냥", d:"소형 안전성냥 1갑만 몸에 지닐 수 있어요. 위탁 수하물에는 넣을 수 없습니다."},
+    {n:"라이터 연료 · 부싯돌", e:"⛽", c:"위험물", v:"ban", ox:"✕✕", k:"라이터가스 라이터기름 벤진 부싯돌", d:"리필용 가스·오일은 기내·위탁 모두 금지입니다."},
+    {n:"부탄가스 · 캠핑가스", e:"🧯", c:"위험물", v:"ban", ox:"✕✕", k:"가스 부탄 캠핑 카트리지 이소부탄", d:"기내·위탁 모두 금지입니다. 현지에서 구입하세요."},
+    {n:"캠핑 버너 · 알코올 램프", e:"🔥", c:"위험물", v:"ban", ox:"✕✕", k:"버너 스토브 알코올램프 캠핑", d:"연료가 남아 있으면 금지. 완전히 세척한 버너 본체만 예외적으로 위탁됩니다."},
+    {n:"폭죽 · 불꽃놀이 · 화약", e:"🎆", c:"위험물", v:"ban", ox:"✕✕", k:"폭죽 화약 크래커 스파클러", d:"폭발물로 분류돼 기내·위탁 모두 금지입니다."},
+    {n:"페인트 · 시너 · 스프레이 페인트", e:"🎨", c:"위험물", v:"ban", ox:"✕✕", k:"신나 유성 도료 락카 스프레이페인트", d:"인화성 물질로 기내·위탁 모두 금지입니다."},
+    {n:"강력 접착제 · 본드", e:"🧴", c:"위험물", v:"ban", ox:"✕✕", k:"본드 접착제 순간접착제 에폭시", d:"인화성·유해 증기 때문에 대용량은 금지. 소량 문구용 풀은 가능합니다."},
+    {n:"표백제 · 락스 · 강산", e:"🧪", c:"위험물", v:"ban", ox:"✕✕", k:"락스 표백제 염산 황산 부식", d:"부식성 물질로 기내·위탁 모두 금지입니다."},
+    {n:"호신용 스프레이 · 최루가스", e:"🌶️", c:"위험물", v:"ban", ox:"✕✕", k:"최루 페퍼스프레이 가스총 호신", d:"최루 성분이 있는 제품은 기내·위탁 모두 금지입니다."},
+    {n:"살충제 · 농약", e:"🦟", c:"위험물", v:"ban", ox:"✕✕", k:"에프킬라 모기약 농약 살충제", d:"살충·농약 성분은 기내·위탁 모두 금지. 인체용 모기기피제는 소량 허용됩니다."},
+    {n:"모기기피제 (인체용)", e:"🦟", c:"위험물", v:"cond", ox:"△○", k:"기피제 버그스프레이 모기", d:"인체용 기피제는 소량 허용. 스프레이형은 에어로졸 규정(500ml·총 2L)을 받습니다."},
+    {n:"자동차 배터리 · 점프스타터", e:"🚗", c:"위험물", v:"ban", ox:"✕✕", k:"납축전지 점프스타터 차량배터리", d:"기내·위탁 모두 금지. 차량용 점프스타터도 용량 초과로 대부분 거부됩니다."},
+    {n:"파손·리콜된 배터리", e:"🔋", c:"위험물", v:"ban", ox:"✕✕", k:"스웰링 부푼배터리 리콜", d:"부풀거나 손상된 배터리, 리콜 대상 기기는 화재 위험으로 운송이 거부됩니다."},
+    {n:"드라이아이스", e:"❄️", c:"위험물", v:"cond", ox:"△△", k:"드라이아이스 냉매", d:"식품 냉각용으로 <em>2.5kg 이하</em>, 통풍 포장 + 항공사 사전 신고 시에만 가능합니다."},
+    {n:"총기 · 실탄", e:"🎯", c:"위험물", v:"cond", ox:"✕△", k:"총 엽총 사냥 탄약 실탄", d:"기내 절대 금지. 사전 신고 후 잠금 케이스에 넣어 위탁해야 하며 허가증이 필요합니다."},
+    {n:"전기충격기 · 테이저", e:"⚡", c:"위험물", v:"ban", ox:"✕✕", k:"테이저 전기충격기 스턴건", d:"기내·위탁 모두 금지이며 국내 반입 자체가 규제 대상입니다."},
+    {n:"수갑 · 구속장구", e:"🔗", c:"위험물", v:"checked", ox:"✕○", k:"수갑 구속구", d:"기내 반입 금지. 국가에 따라 소지 자체가 불법일 수 있어요."},
+    {n:"수은 · 방사성 물질", e:"☢️", c:"위험물", v:"ban", ox:"✕✕", k:"수은 방사능 방사성", d:"기내·위탁 모두 금지. 수은 체온계만 케이스에 담아 1개 예외입니다."},
+    {n:"강력 자석 · 네오디뮴", e:"🧲", c:"위험물", v:"cond", ox:"△△", k:"자석 네오디뮴 마그넷", d:"항공 계기에 영향을 줄 수 있어 일정 자기장 이상은 운송 금지. 소형 자석은 가능합니다."},
+    {n:"산소통 (산업용) · 압축가스", e:"🛢️", c:"위험물", v:"ban", ox:"✕✕", k:"압축가스 실린더 헬륨 산소", d:"압축가스 실린더는 기내·위탁 모두 금지. 의료용 산소만 사전 승인으로 예외입니다."},
+    {n:"소독용 에탄올 · 과산화수소", e:"🧴", c:"위험물", v:"cond", ox:"△○", k:"에탄올 알콜 과산화수소 소독", d:"알코올 70% 이하 소독제는 소량 허용. 고농도 원액은 인화성으로 금지됩니다."},
+    {n:"담배 · 시가", e:"🚬", c:"위험물", v:"both", ox:"○○", k:"담배 시가 연초 보루", d:"기내·위탁 모두 가능. 면세 한도는 보통 200개비(1보루)이고 기내 흡연은 금지예요."},
+    {n:"유모차", e:"🍼", c:"유아·반려", v:"cond", ox:"△○", k:"유모차 스트롤러 디럭스 절충형", d:"소형 접이식은 기내 가능한 항공사도 있어요. 대부분은 <em>탑승구에서 위탁</em>하고 내릴 때 돌려받습니다."},
+    {n:"카시트", e:"🚗", c:"유아·반려", v:"cond", ox:"△○", k:"카시트 유아용시트 부스터", d:"좌석을 구매하면 기내 장착이 가능하고, 아니면 무료 위탁합니다. 인증 마크가 필요해요."},
+    {n:"아기띠 · 힙시트", e:"👶", c:"유아·반려", v:"both", ox:"○○", k:"아기띠 힙시트 슬링 캐리어", d:"제한 없음. 기내에서 착용한 채 있을 수 있어요."},
+    {n:"젖병 · 빨대컵", e:"🍼", c:"유아·반려", v:"both", ox:"○○", k:"젖병 빨대컵 텀블러 유아용품", d:"용기 자체는 제한 없음. 안에 든 액체만 규정을 받습니다."},
+    {n:"기저귀 · 물티슈", e:"🧻", c:"유아·반려", v:"both", ox:"○○", k:"기저귀 물티슈 유아용품", d:"제한 없음. 넉넉히 챙겨도 문제되지 않아요."},
+    {n:"아기 장난감", e:"🧸", c:"유아·반려", v:"both", ox:"○○", k:"장난감 인형 토이 유아", d:"제한 없음. 배터리가 든 장난감은 전원을 꺼 두세요."},
+    {n:"반려동물 (기내 동반)", e:"🐶", c:"유아·반려", v:"cond", ox:"△△", k:"강아지 고양이 애견 반려견 펫", d:"케이지 포함 <em>7kg 이하</em>면 기내 동반이 가능한 경우가 많아요. 편당 마릿수 제한이 있으니 예약 시 신청하세요."},
+    {n:"반려동물 케이지 · 켄넬", e:"📦", c:"유아·반려", v:"cond", ox:"△○", k:"케이지 켄넬 이동장 하드케이스", d:"기내용은 좌석 아래에 들어가는 규격, 화물용은 IATA 규격 켄넬이 필요합니다."},
+    {n:"반려동물 목줄 · 배변패드", e:"🦮", c:"유아·반려", v:"both", ox:"○○", k:"목줄 하네스 배변패드 리드줄", d:"제한 없음. 기내 동반 시에는 케이지 밖으로 꺼낼 수 없어요."},
+    {n:"옷 · 외투", e:"👕", c:"의류·생활", v:"both", ox:"○○", k:"옷 의류 패딩 코트 티셔츠", d:"제한 없음. 두꺼운 외투는 입고 타면 수하물 무게를 줄일 수 있어요."},
+    {n:"신발 · 운동화", e:"👟", c:"의류·생활", v:"both", ox:"○○", k:"신발 운동화 구두 슬리퍼 부츠", d:"제한 없음. 무거운 신발은 신고 타는 편이 유리해요."},
+    {n:"모자 · 벨트 · 장갑", e:"🧢", c:"의류·생활", v:"both", ox:"○○", k:"모자 벨트 장갑 목도리", d:"제한 없음. 금속 버클 벨트는 보안검색 때 풀어야 합니다."},
+    {n:"수건 · 이불 · 베개", e:"🛏️", c:"의류·생활", v:"both", ox:"○○", k:"수건 이불 베개 담요 침구", d:"제한 없음. 부피가 커서 압축팩을 쓰면 편해요."},
+    {n:"목베개 · 안대 · 귀마개", e:"😴", c:"의류·생활", v:"both", ox:"○○", k:"목베개 안대 귀마개 기내용품", d:"제한 없음. 기내 수하물 개수에 포함되지 않는 항공사도 많아요."},
+    {n:"진공 압축팩", e:"🗜️", c:"의류·생활", v:"both", ox:"○○", k:"압축팩 진공팩 여행용품", d:"제한 없음. 위탁 짐 부피를 줄이는 데 효과적이에요."},
+    {n:"여행용 자물쇠", e:"🔒", c:"의류·생활", v:"both", ox:"○○", k:"자물쇠 tsa 캐리어락 다이얼", d:"제한 없음. 미국 노선은 <em>TSA 인증</em> 자물쇠를 써야 파손되지 않아요."},
+    {n:"여행용 어댑터 · 변압기", e:"🔌", c:"의류·생활", v:"both", ox:"○○", k:"어댑터 변압기 돼지코 콘센트", d:"제한 없음. 목적지 플러그 타입을 확인하세요."},
+    {n:"보온병 · 텀블러", e:"🍵", c:"의류·생활", v:"both", ox:"○○", k:"텀블러 보온병 물병 스텐", d:"용기는 제한 없음. <em>내용물은 비워야</em> 보안검색을 통과합니다."},
+    {n:"도시락통 · 수저세트", e:"🍱", c:"의류·생활", v:"cond", ox:"△○", k:"도시락 수저 젓가락 포크 나이프", d:"용기와 수저는 가능하지만 <em>금속 칼이 포함된 세트</em>는 위탁해야 합니다."},
+    {n:"머그컵 · 유리컵", e:"☕", c:"의류·생활", v:"both", ox:"○○", k:"컵 머그 유리컵 기념품", d:"제한 없음. 깨질 수 있어 완충 포장을 권합니다."},
+    {n:"스팀다리미 · 여행용 다리미", e:"👔", c:"의류·생활", v:"both", ox:"○○", k:"다리미 스티머 주름", d:"반입 가능하지만 <em>물통을 비워야</em> 합니다. 기내에서는 쓸 수 없어요."},
+    {n:"옷걸이 · 빨래줄", e:"🪝", c:"의류·생활", v:"both", ox:"○○", k:"옷걸이 행거 빨래줄 집게", d:"제한 없음. 금속 옷걸이도 반입 가능합니다."},
+    {n:"빗 · 헤어롤 · 머리끈", e:"💇", c:"의류·생활", v:"both", ox:"○○", k:"빗 헤어롤 머리끈 집게핀", d:"제한 없음. 금속 꼬리빗은 뾰족하면 거절될 수 있어요."},
+    {n:"손거울 · 화장 거울", e:"🪞", c:"의류·생활", v:"both", ox:"○○", k:"거울 손거울 화장거울", d:"제한 없음. 유리 거울은 깨지지 않게 포장하세요."},
+    {n:"화장품 파우치 · 세면백", e:"👜", c:"의류·생활", v:"both", ox:"○○", k:"파우치 세면백 트래블키트", d:"파우치 자체는 제한 없음. 안에 든 액체만 100ml 규정을 받아요."},
+    {n:"지퍼백 · 여행용 공병", e:"🛍️", c:"의류·생활", v:"both", ox:"○○", k:"지퍼백 공병 소분용기 트래블", d:"제한 없음. 국제선 액체 반입에 <em>꼭 필요한 준비물</em>이에요."},
+    {n:"에코백 · 보조가방", e:"👝", c:"의류·생활", v:"both", ox:"○○", k:"에코백 토트백 보조가방 쇼퍼백", d:"규격 안이면 개인 소지품 1개로 기내에 들고 탈 수 있어요."},
+    {n:"캐리어 · 여행가방", e:"🧳", c:"의류·생활", v:"both", ox:"○○", k:"캐리어 여행가방 트렁크 슈트케이스", d:"기내용은 삼변 합 115cm 이내, 위탁은 보통 158~203cm 이내예요."},
+    {n:"접이식 의자 · 돗자리", e:"🪑", c:"의류·생활", v:"checked", ox:"✕○", k:"캠핑의자 돗자리 접이식", d:"금속 프레임은 둔기로 보아 기내 반입이 거절되는 경우가 많아요."},
+    {n:"책 · 노트 · 필기구", e:"📚", c:"의류·생활", v:"both", ox:"○○", k:"책 노트 볼펜 다이어리 필기", d:"제한 없음. 책은 무거우니 위탁 무게를 확인하세요."},
+    {n:"우비 · 방수팩", e:"🌧️", c:"의류·생활", v:"both", ox:"○○", k:"우비 우의 방수팩 레인코트", d:"제한 없음. 방수팩은 액체 누출 대비에도 쓸모가 많아요."},
+    {n:"현금 · 귀중품", e:"💰", c:"기타·귀중품", v:"cabin", ox:"○✕", k:"돈 현금 지갑 귀중품 달러", d:"위탁 시 분실 보상이 거의 되지 않아요. <em>반드시 몸에 지니거나 기내 가방</em>에."},
+    {n:"여권 · 신분증 · 서류", e:"🛂", c:"기타·귀중품", v:"cabin", ox:"○✕", k:"여권 신분증 티켓 서류 비자", d:"위탁하면 입국 심사를 통과할 수 없습니다. 항상 기내로."},
+    {n:"신용카드 · 교통카드", e:"💳", c:"기타·귀중품", v:"cabin", ox:"○✕", k:"카드 신용카드 체크카드", d:"기내 보관을 권합니다. 분실에 대비해 사본을 따로 두세요."},
+    {n:"귀금속 · 시계 · 명품", e:"💎", c:"기타·귀중품", v:"cabin", ox:"○✕", k:"금 반지 목걸이 명품 시계 보석", d:"고가품은 위탁 보상 한도를 넘습니다. 반드시 기내로 가져가세요."},
+    {n:"도장 · 인감", e:"🔖", c:"기타·귀중품", v:"cabin", ox:"○✕", k:"도장 인감 직인", d:"작고 중요해서 기내 보관을 권합니다."},
+    {n:"그림 · 액자 · 골동품", e:"🖼️", c:"기타·귀중품", v:"cond", ox:"△○", k:"그림 액자 미술품 골동품 도자기", d:"크기가 맞으면 기내 가능. 골동품은 <em>문화재 반출 허가</em>가 필요할 수 있어요."},
+    {n:"악기 (기타·바이올린)", e:"🎸", c:"기타·귀중품", v:"cond", ox:"△○", k:"기타 바이올린 우쿨렐레 악기 첼로", d:"기내 규격(삼변 합 115cm) 안이면 기내 가능. 첼로처럼 크면 좌석을 사거나 위탁합니다."},
+    {n:"유골함 · 유해", e:"⚱️", c:"기타·귀중품", v:"cond", ox:"△△", k:"유골 유해 화장 납골", d:"화장증명서·사망진단서가 필요하고 X-ray 투과가 되는 용기여야 합니다. 항공사에 사전 문의하세요."},
+    {n:"드라이플라워 · 생화", e:"💐", c:"기타·귀중품", v:"cond", ox:"△△", k:"꽃 생화 드라이플라워 부케", d:"식물 검역 대상입니다. 국내선은 자유롭지만 국제선은 반입 금지국이 많아요."},
+    {n:"조개껍데기 · 산호 · 상아", e:"🐚", c:"기타·귀중품", v:"ban", ox:"✕✕", k:"산호 상아 조개 기념품 cites", d:"산호·상아·거북등껍데기는 <em>CITES 협약</em>으로 반출입이 금지됩니다. 기념품 구입에 주의하세요."},
+    {n:"모피 · 동물가죽 제품", e:"🧥", c:"기타·귀중품", v:"cond", ox:"△△", k:"모피 가죽 악어가죽 파충류", d:"일반 가죽은 자유롭지만 멸종위기종 가죽은 CITES 허가 없이는 금지입니다."},
+    {n:"목재 · 흙 · 토양", e:"🪵", c:"기타·귀중품", v:"cond", ox:"△△", k:"흙 토양 목재 나무 검역", d:"흙이 묻은 신발·캠핑 장비도 검역 대상이에요. 호주·뉴질랜드는 특히 엄격합니다."},
+    {n:"복권 · 상품권", e:"🎟️", c:"기타·귀중품", v:"cabin", ox:"○✕", k:"복권 상품권 기프트카드 티켓", d:"현금에 준하므로 기내 보관을 권합니다."}
+  ];
+
+  const CATS = ["전자·배터리", "액체·화장품", "식품", "날붙이·공구", "스포츠·레저", "의약·의료", "위험물", "유아·반려", "의류·생활", "기타·귀중품"];
+
+  const MARK_COLOR = { "○":"var(--v-both)", "△":"var(--v-cond)", "✕":"var(--v-ban)" };
+
+  function oxOf(item, r){ return (r.ox || item.ox).split(""); }
+
+  /* 초성 검색: "ㅂㅈㅂㅌㄹ" → 보조배터리 */
+  const CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+  function toCho(str){
+    let out = "";
+    for (const ch of str){
+      const code = ch.charCodeAt(0);
+      if (code >= 0xAC00 && code <= 0xD7A3) out += CHO[Math.floor((code - 0xAC00) / 588)];
+      else if (ch !== " ") out += ch;
+    }
+    return out;
+  }
+  const isChoQuery = (q) => q.length >= 2 && [...q].every(ch => CHO.includes(ch));
+
+  ITEMS.forEach(it => {
+    it._name = it.n.toLowerCase();
+    it._key  = (it.n + " " + it.c + " " + (it.k || "")).toLowerCase();
+    it._desc = it.d.replace(/<[^>]+>/g, "").toLowerCase();
+    it._cho  = toCho(it.n + (it.k || ""));
+  });
+
+  /* 0에 가까울수록 잘 맞는 결과 */
+  function scoreOf(it, q, cho){
+    if (cho) return it._cho.includes(q) ? (it._cho.startsWith(q) ? 1 : 2) : 99;
+    if (it._name === q) return 0;
+    if (it._name.startsWith(q)) return 1;
+    if (it._name.includes(q)) return 2;
+    if (it._key.includes(q)) return 3;
+    if (it._desc.includes(q)) return 8;
+    return 99;
+  }
+
+  const state = { airline:"ke", route:"int", q:"", cat:null, verdict:null };
+
+  const $ = (s) => document.querySelector(s);
+  const grid = $("#grid"), empty = $("#empty");
+
+  /* 항공사 셀렉트 */
+  const sel = $("#airline");
+  let lastGroup = null;
+  AIRLINES.forEach(a => {
+    if (a.tag !== lastGroup){
+      const g = document.createElement("optgroup");
+      g.label = a.tag; g.dataset.tag = a.tag; sel.appendChild(g); lastGroup = a.tag;
+    }
+    const o = document.createElement("option");
+    o.value = a.id; o.textContent = a.name;
+    sel.lastElementChild.appendChild(o);
+  });
+  sel.value = state.airline;
+
+  function renderRule(){
+    const a = AIRLINES.find(x => x.id === state.airline) || AIRLINES[0];
+    $("#rule-name").textContent = a.name;
+    $("#rule-code").textContent = a.code;
+    $("#rule-tag").textContent = a.tag;
+    $("#rule-cabin-kg").textContent = a.cabinKg;
+    $("#rule-cabin-size").textContent = a.cabinSize;
+    $("#rule-cabin-cnt").textContent = a.cabinCnt;
+    $("#rule-checked-kg").textContent = a.checkedKg;
+    $("#rule-checked-size").textContent = a.checkedSize;
+    $("#rule-checked-note").textContent = a.checkedNote;
+    $("#rule-extra").textContent = a.extra;
+    $("#rule-link").href = a.link;
+  }
+
+  /* 필터 칩 */
+  const vWrap = $("#verdict-filters");
+  Object.keys(V).forEach(key => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip v"; b.dataset.verdict = key;
+    b.style.setProperty("--c", V[key].c);
+    b.setAttribute("aria-pressed","false");
+    b.innerHTML = '<span class="dot"></span>' + V[key].label;
+    vWrap.appendChild(b);
+  });
+  const cWrap = $("#cat-filters");
+  CATS.forEach(c => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.dataset.cat = c;
+    b.setAttribute("aria-pressed","false"); b.textContent = c;
+    cWrap.appendChild(b);
+  });
+
+  function resolve(item){
+    if (state.route === "dom" && item.dom)
+      return { v:item.dom.v, d:item.dom.d, ox:item.dom.ox, calc:item.dom.v === "cond" ? item.calc : null };
+    return { v:item.v, d:item.d, ox:item.ox, calc:item.calc };
+  }
+
+  function whVerdict(mah, volt){
+    const wh = (mah * volt) / 1000;
+    let msg;
+    if (!isFinite(wh) || wh <= 0) return { wh:0, msg:"용량을 입력해 주세요." };
+    if (wh < 100) msg = "100Wh 미만 — 별도 승인 없이 <b>최대 5개</b>까지 기내 반입 OK";
+    else if (wh <= 160) msg = "100~160Wh — 카운터에서 <b>승인 스티커</b>를 받으면 <b>2개</b>까지 기내 반입";
+    else msg = "160Wh 초과 — 기내·위탁 <b>모두 반입 불가</b>";
+    return { wh, msg };
+  }
+
+  function mlVerdict(ml){
+    if (!isFinite(ml) || ml <= 0) return "용기에 적힌 용량을 입력해 주세요.";
+    if (state.route === "dom") return "국내선은 용량 제한이 없어 그대로 기내 반입 OK";
+    if (ml <= 100) return "100ml 이하 — <b>지퍼백(1L)</b>에 담으면 기내 반입 OK";
+    return Math.round(ml) + "ml — 기내 불가, <b>위탁</b>으로 부치세요 (남은 양이 아니라 용기 표시 용량 기준)";
+  }
+
+  function makeCalc(item, vKey){
+    const box = document.createElement("div");
+    box.className = "calc";
+    const safeId = item.n.replace(/[^가-힣a-zA-Z0-9]/g, "");
+    if (item.calc === "wh"){
+      box.innerHTML =
+        '<div class="calc-row">' +
+          '<label for="mah-' + safeId + '">mAh</label>' +
+          '<input type="number" id="mah-' + safeId + '" value="20000" min="0" step="1000">' +
+          '<label for="v-' + safeId + '">전압 V</label>' +
+          '<input type="number" id="v-' + safeId + '" value="3.7" min="0" step="0.1">' +
+        '</div><div class="calc-out"></div>';
+      const mahEl = box.querySelector("#mah-" + safeId);
+      const vEl = box.querySelector("#v-" + safeId);
+      const out = box.querySelector(".calc-out");
+      const upd = () => {
+        const r = whVerdict(parseFloat(mahEl.value), parseFloat(vEl.value));
+        out.innerHTML = r.wh ? "<b>" + r.wh.toFixed(1) + "Wh</b> · " + r.msg : r.msg;
+      };
+      mahEl.addEventListener("input", upd); vEl.addEventListener("input", upd); upd();
+    } else {
+      box.innerHTML =
+        '<div class="calc-row">' +
+          '<label for="ml-' + safeId + '">용기 용량 ml</label>' +
+          '<input type="number" id="ml-' + safeId + '" value="100" min="0" step="10">' +
+        '</div><div class="calc-out"></div>';
+      const mlEl = box.querySelector("#ml-" + safeId);
+      const out = box.querySelector(".calc-out");
+      const upd = () => { out.innerHTML = mlVerdict(parseFloat(mlEl.value)); };
+      mlEl.addEventListener("input", upd); upd();
+    }
+    return box;
+  }
+
+  function render(){
+    const q = state.q.trim().toLowerCase();
+    const cho = q ? isChoQuery(q) : false;
+    const pool = ITEMS.filter(it => {
+      if (state.cat && it.c !== state.cat) return false;
+      if (state.verdict && resolve(it).v !== state.verdict) return false;
+      return true;
+    });
+
+    let list = pool;
+    if (q){
+      let scored = pool.map(it => ({ it, s:scoreOf(it, q, cho) })).filter(x => x.s < 99);
+      // 이름·별칭에 맞는 게 있으면 설명까지 뒤진 결과는 감춰서 깔끔하게
+      if (scored.some(x => x.s < 8)) scored = scored.filter(x => x.s < 8);
+      scored.sort((a,b) => a.s - b.s || a.it.n.length - b.it.n.length);
+      list = scored.map(x => x.it);
+    }
+
+    renderHero(q ? list : []);
+
+    grid.innerHTML = "";
+    list.forEach(it => {
+      const r = resolve(it);
+      const meta = V[r.v];
+      const ox = oxOf(it, r);
+      const card = document.createElement("article");
+      card.className = "item";
+      card.style.setProperty("--c", meta.c);
+      card.style.setProperty("--cbg", meta.bg);
+      card.style.setProperty("--cline", meta.line);
+      card.innerHTML =
+        '<div class="item-top">' +
+          '<span class="emo" aria-hidden="true">' + it.e + '</span>' +
+          '<div style="flex:1;min-width:0">' +
+            '<h3 class="item-name">' + it.n + '</h3>' +
+            '<span class="item-cat">' + it.c + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<span class="verdict">' + meta.label + '</span>' +
+        '<div class="ox">' +
+          '<span class="oxpill" style="--mc:' + MARK_COLOR[ox[0]] + '">기내 <b class="m">' + ox[0] + '</b></span>' +
+          '<span class="oxpill" style="--mc:' + MARK_COLOR[ox[1]] + '">위탁 <b class="m">' + ox[1] + '</b></span>' +
+        '</div>' +
+        '<p class="desc">' + r.d + '</p>';
+      if (r.calc) card.appendChild(makeCalc(it, r.v));
+      grid.appendChild(card);
+    });
+
+    syncReset();
+    $("#count").textContent = list.length;
+    $("#count-label").textContent = "개 품목" + (state.route === "dom" ? " · 국내선 기준" : " · 국제선 기준");
+    empty.hidden = list.length !== 0;
+  }
+
+  const hero = $("#hero");
+  function renderHero(list){
+    if (!list.length){ hero.hidden = true; hero.innerHTML = ""; return; }
+    const it = list[0], r = resolve(it), meta = V[r.v], ox = oxOf(it, r);
+    hero.hidden = false;
+    hero.style.setProperty("--c", meta.c);
+    hero.style.setProperty("--cbg", meta.bg);
+    hero.style.setProperty("--cline", meta.line);
+    hero.innerHTML =
+      '<span class="hero-emo" aria-hidden="true">' + it.e + '</span>' +
+      '<div class="hero-text">' +
+        '<p class="hero-kicker">' + (state.route === "dom" ? "국내선" : "국제선") + ' · ' + it.c + '</p>' +
+        '<h2 class="hero-name">' + it.n + '</h2>' +
+        '<p class="hero-verdict">' + meta.label + '</p>' +
+        '<p class="hero-desc">' + r.d + '</p>' +
+        (list.length > 1 ? '<p class="hero-more">비슷한 검색 결과 ' + (list.length - 1) + '개가 아래에 더 있어요.</p>' : '') +
+      '</div>' +
+      '<div class="hero-ox">' +
+        '<div class="oxtile" style="--mc:' + MARK_COLOR[ox[0]] + '"><span class="t">기내</span><span class="m">' + ox[0] + '</span></div>' +
+        '<div class="oxtile" style="--mc:' + MARK_COLOR[ox[1]] + '"><span class="t">위탁</span><span class="m">' + ox[1] + '</span></div>' +
+      '</div>';
+  }
+
+  /* ── 자동완성 + 엔터 확정 ───────────────── */
+  const qEl = $("#q"), sugEl = $("#suggest"), formEl = $("#searchform");
+  let sugList = [], sugIdx = -1;
+
+  function esc(t){ return t.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+  function matches(q){
+    if (!q) return [];
+    const cho = isChoQuery(q);
+    return ITEMS.map(it => ({ it, s:scoreOf(it, q, cho) }))
+                .filter(x => x.s < 8)
+                .sort((a,b) => a.s - b.s || a.it.n.length - b.it.n.length)
+                .slice(0, 8).map(x => x.it);
+  }
+
+  function hiName(name, q){
+    const i = name.toLowerCase().indexOf(q);
+    if (i < 0) return esc(name);
+    return esc(name.slice(0,i)) + "<mark>" + esc(name.slice(i, i+q.length)) + "</mark>" + esc(name.slice(i+q.length));
+  }
+
+  function renderSuggest(){
+    const q = state.q.trim().toLowerCase();
+    sugList = matches(q);
+    if (!sugList.length){
+      sugEl.hidden = true; sugEl.innerHTML = ""; sugIdx = -1;
+      qEl.setAttribute("aria-expanded","false");
+      return;
+    }
+    sugEl.hidden = false;
+    qEl.setAttribute("aria-expanded","true");
+    sugEl.innerHTML = sugList.map((it, i) => {
+      const r = resolve(it), ox = oxOf(it, r);
+      return '<li role="option" id="sug-' + i + '" data-i="' + i + '" aria-selected="' + (i === sugIdx) + '">' +
+        '<span class="s-emo" aria-hidden="true">' + it.e + '</span>' +
+        '<span class="s-name">' + hiName(it.n, q) + '</span>' +
+        '<span class="s-ox">' +
+          '<span>기내 <b style="color:' + MARK_COLOR[ox[0]] + '">' + ox[0] + '</b></span>' +
+          '<span>위탁 <b style="color:' + MARK_COLOR[ox[1]] + '">' + ox[1] + '</b></span>' +
+        '</span></li>';
+    }).join("") +
+    '<li class="suggest-foot" role="presentation"><kbd>↑</kbd><kbd>↓</kbd> 고르기 <kbd>Enter</kbd> 확인 <kbd>Esc</kbd> 닫기</li>';
+    markSuggest();
+  }
+
+  function markSuggest(){
+    sugEl.querySelectorAll('li[role="option"]').forEach((li, i) => {
+      li.setAttribute("aria-selected", String(i === sugIdx));
+      if (i === sugIdx) li.scrollIntoView({ block:"nearest" });
+    });
+    qEl.setAttribute("aria-activedescendant", sugIdx >= 0 ? "sug-" + sugIdx : "");
+  }
+
+  function closeSuggest(){
+    sugEl.hidden = true; sugIdx = -1;
+    qEl.setAttribute("aria-expanded","false");
+    qEl.removeAttribute("aria-activedescendant");
+  }
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function confirmSearch(name){
+    if (name){ state.q = name; qEl.value = name; }
+    closeSuggest();
+    render();
+    const h = $("#hero");
+    if (!h.hidden){
+      const y = h.getBoundingClientRect().top + window.scrollY - 96;
+      window.scrollTo({ top: Math.max(0, y), behavior: reduceMotion ? "auto" : "smooth" });
+      h.classList.remove("pop"); void h.offsetWidth; h.classList.add("pop");
+    } else if (state.q.trim()){
+      qEl.classList.remove("shake"); void qEl.offsetWidth; qEl.classList.add("shake");
+    }
+  }
+
+  formEl.addEventListener("submit", e => {
+    e.preventDefault();
+    confirmSearch(sugIdx >= 0 && sugList[sugIdx] ? sugList[sugIdx].n : null);
+  });
+
+  qEl.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp"){
+      if (sugEl.hidden || !sugList.length) return;
+      e.preventDefault();
+      sugIdx = e.key === "ArrowDown"
+        ? (sugIdx + 1) % sugList.length
+        : (sugIdx <= 0 ? sugList.length - 1 : sugIdx - 1);
+      markSuggest();
+    } else if (e.key === "Escape"){
+      closeSuggest();
+    }
+  });
+
+  sugEl.addEventListener("mousedown", e => {
+    const li = e.target.closest('li[role="option"]'); if (!li) return;
+    e.preventDefault();
+    confirmSearch(sugList[Number(li.dataset.i)].n);
+  });
+
+  document.addEventListener("click", e => {
+    if (!formEl.contains(e.target)) closeSuggest();
+  });
+
+  const resetBtn = $("#reset");
+  function syncReset(){
+    resetBtn.dataset.active = String(Boolean(state.q || state.cat || state.verdict));
+  }
+
+  /* 이벤트 */
+  resetBtn.addEventListener("click", () => {
+    state.q = ""; state.cat = null; state.verdict = null;
+    $("#q").value = "";
+    vWrap.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed","false"));
+    cWrap.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed","false"));
+    closeSuggest();
+    render();
+    qEl.focus();
+  });
+  sel.addEventListener("change", e => { state.airline = e.target.value; renderRule(); });
+  qEl.addEventListener("input", e => { state.q = e.target.value; sugIdx = -1; renderSuggest(); render(); });
+  qEl.addEventListener("focus", () => { if (state.q.trim()) renderSuggest(); });
+  document.querySelectorAll(".seg button").forEach(b => {
+    b.addEventListener("click", () => {
+      state.route = b.dataset.route;
+      document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      if (!sugEl.hidden) renderSuggest();
+      render();
+    });
+  });
+  vWrap.addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    state.verdict = state.verdict === b.dataset.verdict ? null : b.dataset.verdict;
+    vWrap.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.verdict === state.verdict)));
+    render();
+  });
+  cWrap.addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    state.cat = state.cat === b.dataset.cat ? null : b.dataset.cat;
+    cWrap.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.cat === state.cat)));
+    render();
+  });
+
+  renderRule();
+  render();
+})();
+</script>
+
+<footer class="sitefoot">
+  <div class="wrap foot-in">
+    <span class="foot-name">수하물 신호등</span>
+    <nav class="foot-links" aria-label="사이트 문서">
+      <a href="about.html">소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="terms.html">이용약관 · 면책</a>
+      <a href="contact.html">문의</a>
+    </nav>
+    <p class="foot-copy">본 사이트의 정보는 참고용입니다. 실제 반입 여부는 항공사와 공항 보안검색의 판단에 따릅니다. © 2026 수하물 신호등</p>
+  </div>
+</footer>
+
+</body>
+</html>
