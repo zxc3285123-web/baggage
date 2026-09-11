@@ -2,7 +2,7 @@
 POSTS = {}
 
 POSTS["airlines"] = dict(
-slug="posts/airline-baggage-compare.html",
+slug="guide/airline-baggage-compare.html",
 title="국내 항공사 수하물 규정 비교 — 기내는 같은데 위탁이 다릅니다",
 desc="대한항공·아시아나·제주항공 등 국내 항공사 9곳의 기내 및 위탁 수하물 규정을 한눈에 비교했습니다. 특가 운임의 함정과 초과 요금 아끼는 법까지.",
 tag="항공사 규정", date="2026-09-11", read="6분",

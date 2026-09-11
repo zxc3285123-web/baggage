@@ -2,7 +2,7 @@
 POSTS = {}
 
 POSTS["checked"] = dict(
-slug="posts/checked-baggage-donts.html",
+slug="guide/checked-baggage-donts.html",
 title="위탁 수하물에 넣으면 안 되는 것 — 금지 품목과 넣지 말아야 할 것",
 desc="위탁 수하물에 넣으면 규정 위반인 품목과, 규정상 가능하지만 넣지 않는 편이 나은 물건들을 구분해 정리했습니다.",
 tag="위탁 수하물", date="2026-09-11", read="5분",
@@ -82,7 +82,7 @@ body="""
 )
 
 POSTS["packing"] = dict(
-slug="posts/packing-order.html",
+slug="guide/packing-order.html",
 title="해외여행 짐 싸는 순서 — 기내 가방부터 채우면 실패하지 않습니다",
 desc="처음 해외여행을 가는 분을 위한 짐 싸기 순서와 체크리스트. 기내·위탁 배분 원칙과 공항에서 시간을 아끼는 정리법까지.",
 tag="여행 준비", date="2026-09-11", read="5분",

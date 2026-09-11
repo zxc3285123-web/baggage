@@ -114,8 +114,8 @@ td.num{font-family:var(--font-num); font-variant-numeric:tabular-nums}
 .btn:hover{background:var(--accent-deep); border-color:var(--accent-deep)}
 .btn.ghost{background:var(--surface); color:var(--accent-deep); border-color:var(--line)}
 .btn.ghost:hover{background:var(--surface); border-color:var(--accent)}
-.ox{display:inline-block; font-weight:700; font-family:var(--font-num)}
-.ox.o{color:var(--v-both)} .ox.t{color:var(--v-cond)} .ox.x{color:var(--v-ban)}
+.mk{display:inline-block; font-weight:700; font-family:var(--font-num); font-size:15px}
+.mk.o{color:var(--v-both)} .mk.t{color:var(--v-cond)} .mk.x{color:var(--v-ban)}
 
 /* 광고 자리 */
 .adslot{margin:28px auto; text-align:center; min-height:1px}

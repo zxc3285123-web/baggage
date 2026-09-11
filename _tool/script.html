@@ -1,0 +1,498 @@
+<script>
+(function(){
+  "use strict";
+
+  const AIRLINES = [
+    { id:"ke", name:"대한항공", code:"KE", tag:"국적 대형항공사",
+      cabinKg:"10kg", cabinSize:"55×40×20cm · 삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"23kg", checkedSize:"1개 · 삼변 합 158cm 이내", checkedNote:"미주 노선은 2개까지",
+      extra:"일등석·프레스티지석은 기내 2개 총 18kg", link:"https://www.koreanair.com/contents/plan-your-travel/baggage/carry-on-baggage" },
+    { id:"oz", name:"아시아나항공", code:"OZ", tag:"국적 대형항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개(40×30×20cm)",
+      checkedKg:"23kg", checkedSize:"1개 · 삼변 합 158cm 이내", checkedNote:"미주 노선은 2개까지",
+      extra:"비즈니스석은 기내 2개(각 10kg) + 소지품 1개", link:"https://m.flyasiana.com/C/KR/KO/contents/carry-on-baggage" },
+    { id:"7c", name:"제주항공", code:"7C", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm · 가장 긴 변 55cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15kg", checkedSize:"1개 · 삼변 합 203cm 이내", checkedNote:"베이직 운임은 무료 위탁 없음",
+      extra:"국내선은 위탁 15kg 기준, 운임별로 다름", link:"https://www.jejuair.net/ko/linkService/boardingProcessGuide/cabinBaggage.do" },
+    { id:"lj", name:"진에어", code:"LJ", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15kg", checkedSize:"1개 · 삼변 합 203cm 이내", checkedNote:"괌 노선은 2개, 각 23kg",
+      extra:"노선별로 무료 허용량이 다르니 예약 내역 확인", link:"https://www.jinair.com/ready/baggage" },
+    { id:"tw", name:"트리니티항공 (구 티웨이)", code:"TW", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15~20kg", checkedSize:"1개 · 노선별 상이", checkedNote:"장거리 노선은 2개, 각 23kg",
+      extra:"2026년 9월 10일 사명 변경, 편명 코드 TW 유지", link:"https://www.trinityairways.com/" },
+    { id:"bx", name:"에어부산", code:"BX", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15kg", checkedSize:"1개 · 삼변 합 203cm 이내", checkedNote:"일부 노선 2개, 각 23kg",
+      extra:"특가 항공권은 무료 위탁이 빠질 수 있어요", link:"https://www.airbusan.com/content/individual/?content=serviceBaggageFree" },
+    { id:"rs", name:"에어서울", code:"RS", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15kg", checkedSize:"1개 · 삼변 합 203cm 이내", checkedNote:"일부 노선 2개, 각 23kg",
+      extra:"특가 운임은 무료 위탁 제외", link:"https://flyairseoul.com/CW/ko/customerServiceBaggage.do" },
+    { id:"ze", name:"이스타항공", code:"ZE", tag:"국적 저비용항공사",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"15kg", checkedSize:"1개 · 삼변 합 203cm 이내", checkedNote:"할인 운임은 별도 구매",
+      extra:"국내선은 위탁 15kg 기준", link:"https://www.eastarjet.com/newstar/PGWHF00001" },
+    { id:"yp", name:"에어프레미아", code:"YP", tag:"국적 하이브리드",
+      cabinKg:"10kg", cabinSize:"삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"운임별", checkedSize:"이코노미 라이트는 무료 위탁 없음", checkedNote:"스탠다드 이상 1개 23kg",
+      extra:"운임 등급 차이가 큰 항공사라 예약 내역 확인이 필수", link:"https://www.airpremia.com/kr/ko/support/baggage/free" },
+    { id:"nh", name:"ANA (전일본공수)", code:"NH", tag:"외항 대형항공사",
+      cabinKg:"10kg", cabinSize:"55×40×25cm · 삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"23kg × 2개", checkedSize:"삼변 합 158cm 이내", checkedNote:"노선·등급별로 상이",
+      extra:"일본 국내선 소형기(100석 미만)는 기내 규정이 더 작아요", link:"https://www.ana.co.jp/ko/kr/travel-information/baggage-information/carry-on/" },
+    { id:"jl", name:"JAL (일본항공)", code:"JL", tag:"외항 대형항공사",
+      cabinKg:"10kg", cabinSize:"55×40×25cm · 삼변 합 115cm 이내", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"23kg × 2개", checkedSize:"삼변 합 203cm 이내", checkedNote:"이코노미 기준",
+      extra:"100석 미만 기종은 기내 수하물 크기 기준이 달라요", link:"https://www.jal.co.jp/kr/ko/inter/baggage/checked/" },
+    { id:"mm", name:"피치항공", code:"MM", tag:"외항 저비용항공사",
+      cabinKg:"7kg", cabinSize:"55×40×25cm (가방+소지품 합계)", cabinCnt:"가방 1개 + 개인 소지품 1개",
+      checkedKg:"유료", checkedSize:"20kg부터 옵션 구매", checkedNote:"무료 위탁 수하물 없음",
+      extra:"기내 7kg는 가방과 소지품을 합친 무게예요", link:"https://www.flypeach.com/kr/lm/ai/airports/baggage/carry_on_bag" },
+    { id:"ak", name:"에어아시아", code:"AK", tag:"외항 저비용항공사",
+      cabinKg:"7kg", cabinSize:"56×36×23cm", cabinCnt:"가방 1개 + 개인 소지품 1개(40×30×10cm)",
+      checkedKg:"유료", checkedSize:"15~30kg 옵션 구매", checkedNote:"무료 위탁 수하물 없음",
+      extra:"공항에서 사면 비싸니 예약 때 미리 구매하세요", link:"https://support.airasia.com/s/article/What-is-the-baggage-allowance" },
+    { id:"5j", name:"세부퍼시픽", code:"5J", tag:"외항 저비용항공사",
+      cabinKg:"7kg", cabinSize:"56×36×23cm", cabinCnt:"가방 1개 + 개인 소지품 1개(35×25×20cm)",
+      checkedKg:"유료", checkedSize:"20~40kg 옵션 구매", checkedNote:"무료 위탁 수하물 없음",
+      extra:"기내 7kg는 가방과 소지품을 합친 무게예요", link:"https://www.cebupacificair.com/en-PH/pages/travel-info/baggage-information" }
+  ];
+
+  const V = {
+    both:    { label:"기내 · 위탁 모두 OK", short:"모두 OK", c:"var(--v-both)",    bg:"var(--v-both-bg)",    line:"var(--v-both-line)" },
+    cabin:   { label:"기내만 가능",          short:"기내만",  c:"var(--v-cabin)",   bg:"var(--v-cabin-bg)",   line:"var(--v-cabin-line)" },
+    checked: { label:"위탁만 가능",          short:"위탁만",  c:"var(--v-checked)", bg:"var(--v-checked-bg)", line:"var(--v-checked-line)" },
+    cond:    { label:"조건부 가능",          short:"조건부",  c:"var(--v-cond)",    bg:"var(--v-cond-bg)",    line:"var(--v-cond-line)" },
+    ban:     { label:"둘 다 반입 금지",      short:"반입 금지", c:"var(--v-ban)",   bg:"var(--v-ban-bg)",     line:"var(--v-ban-line)" }
+  };
+
+  /*__ITEMS__*/
+
+  const MARK_COLOR = { "○":"var(--v-both)", "△":"var(--v-cond)", "✕":"var(--v-ban)" };
+
+  function oxOf(item, r){ return (r.ox || item.ox).split(""); }
+
+  /* 초성 검색: "ㅂㅈㅂㅌㄹ" → 보조배터리 */
+  const CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+  function toCho(str){
+    let out = "";
+    for (const ch of str){
+      const code = ch.charCodeAt(0);
+      if (code >= 0xAC00 && code <= 0xD7A3) out += CHO[Math.floor((code - 0xAC00) / 588)];
+      else if (ch !== " ") out += ch;
+    }
+    return out;
+  }
+  const isChoQuery = (q) => q.length >= 2 && [...q].every(ch => CHO.includes(ch));
+
+  const squash = (t) => t.toLowerCase().replace(/\s+/g, "");
+
+  ITEMS.forEach(it => {
+    it._name  = squash(it.n);
+    it._alias = (it.k || "").split(/\s+/).filter(Boolean);
+    it._key   = squash(it.n + it.c + (it.k || ""));
+    it._desc  = squash(it.d.replace(/<[^>]+>/g, ""));
+    it._cho   = toCho(it.n + (it.k || ""));
+  });
+
+  /* 이름 대신 별칭으로 걸렸을 때, 어떤 이름으로 찾았는지 알려주기 위한 값 */
+  /* 받침 유무에 따라 '로 / 으로' 를 고른다 */
+  function josaRo(word){
+    const last = word.trim().slice(-1);
+    const code = last.charCodeAt(0);
+    if (code < 0xAC00 || code > 0xD7A3) return "로";
+    const jong = (code - 0xAC00) % 28;
+    return (jong === 0 || jong === 8) ? "로" : "으로";
+  }
+
+  function aliasHit(it, q){
+    if (!q || it._name.includes(q)) return null;
+    return it._alias.find(a => squash(a).includes(q)) || null;
+  }
+
+  /* 0에 가까울수록 잘 맞는 결과. 띄어쓰기는 무시한다 */
+  function scoreOf(it, q, cho){
+    if (cho) return it._cho.includes(q) ? (it._cho.startsWith(q) ? 1 : 2) : 99;
+    if (it._name === q) return 0;
+    if (it._name.startsWith(q)) return 1;
+    if (it._name.includes(q)) return 2;
+    if (it._key.includes(q)) return 3;
+    if (it._desc.includes(q)) return 8;
+    return 99;
+  }
+
+  const state = { airline:"ke", route:"int", q:"", cat:null, verdict:null };
+
+  const $ = (s) => document.querySelector(s);
+  const grid = $("#grid"), empty = $("#empty");
+
+  /* 항공사 셀렉트 */
+  const sel = $("#airline");
+  let lastGroup = null;
+  AIRLINES.forEach(a => {
+    if (a.tag !== lastGroup){
+      const g = document.createElement("optgroup");
+      g.label = a.tag; g.dataset.tag = a.tag; sel.appendChild(g); lastGroup = a.tag;
+    }
+    const o = document.createElement("option");
+    o.value = a.id; o.textContent = a.name;
+    sel.lastElementChild.appendChild(o);
+  });
+  sel.value = state.airline;
+
+  function renderRule(){
+    const a = AIRLINES.find(x => x.id === state.airline) || AIRLINES[0];
+    $("#rule-name").textContent = a.name;
+    $("#rule-code").textContent = a.code;
+    $("#rule-tag").textContent = a.tag;
+    $("#rule-cabin-kg").textContent = a.cabinKg;
+    $("#rule-cabin-size").textContent = a.cabinSize;
+    $("#rule-cabin-cnt").textContent = a.cabinCnt;
+    $("#rule-checked-kg").textContent = a.checkedKg;
+    $("#rule-checked-size").textContent = a.checkedSize;
+    $("#rule-checked-note").textContent = a.checkedNote;
+    $("#rule-extra").textContent = a.extra;
+    $("#rule-link").href = a.link;
+  }
+
+  /* 필터 칩 */
+  const vWrap = $("#verdict-filters");
+  Object.keys(V).forEach(key => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip v"; b.dataset.verdict = key;
+    b.style.setProperty("--c", V[key].c);
+    b.setAttribute("aria-pressed","false");
+    b.innerHTML = '<span class="dot"></span>' + V[key].label;
+    vWrap.appendChild(b);
+  });
+  const cWrap = $("#cat-filters");
+  CATS.forEach(c => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.dataset.cat = c;
+    b.setAttribute("aria-pressed","false"); b.textContent = c;
+    cWrap.appendChild(b);
+  });
+
+  function resolve(item){
+    if (state.route === "dom" && item.dom)
+      return { v:item.dom.v, d:item.dom.d, ox:item.dom.ox, calc:item.dom.v === "cond" ? item.calc : null };
+    return { v:item.v, d:item.d, ox:item.ox, calc:item.calc };
+  }
+
+  function whVerdict(mah, volt){
+    const wh = (mah * volt) / 1000;
+    let msg;
+    if (!isFinite(wh) || wh <= 0) return { wh:0, msg:"용량을 입력해 주세요." };
+    if (wh < 100) msg = "100Wh 미만 — 별도 승인 없이 <b>최대 5개</b>까지 기내 반입 OK";
+    else if (wh <= 160) msg = "100~160Wh — 카운터에서 <b>승인 스티커</b>를 받으면 <b>2개</b>까지 기내 반입";
+    else msg = "160Wh 초과 — 기내·위탁 <b>모두 반입 불가</b>";
+    return { wh, msg };
+  }
+
+  function mlVerdict(ml){
+    if (!isFinite(ml) || ml <= 0) return "용기에 적힌 용량을 입력해 주세요.";
+    if (state.route === "dom") return "국내선은 용량 제한이 없어 그대로 기내 반입 OK";
+    if (ml <= 100) return "100ml 이하 — <b>지퍼백(1L)</b>에 담으면 기내 반입 OK";
+    return Math.round(ml) + "ml — 기내 불가, <b>위탁</b>으로 부치세요 (남은 양이 아니라 용기 표시 용량 기준)";
+  }
+
+  function makeCalc(item, vKey){
+    const box = document.createElement("div");
+    box.className = "calc";
+    const safeId = item.n.replace(/[^가-힣a-zA-Z0-9]/g, "");
+    if (item.calc === "wh"){
+      box.innerHTML =
+        '<div class="calc-row">' +
+          '<label for="mah-' + safeId + '">mAh</label>' +
+          '<input type="number" id="mah-' + safeId + '" value="20000" min="0" step="1000">' +
+          '<label for="v-' + safeId + '">전압 V</label>' +
+          '<input type="number" id="v-' + safeId + '" value="3.7" min="0" step="0.1">' +
+        '</div><div class="calc-out"></div>';
+      const mahEl = box.querySelector("#mah-" + safeId);
+      const vEl = box.querySelector("#v-" + safeId);
+      const out = box.querySelector(".calc-out");
+      const upd = () => {
+        const r = whVerdict(parseFloat(mahEl.value), parseFloat(vEl.value));
+        out.innerHTML = r.wh ? "<b>" + r.wh.toFixed(1) + "Wh</b> · " + r.msg : r.msg;
+      };
+      mahEl.addEventListener("input", upd); vEl.addEventListener("input", upd); upd();
+    } else {
+      box.innerHTML =
+        '<div class="calc-row">' +
+          '<label for="ml-' + safeId + '">용기 용량 ml</label>' +
+          '<input type="number" id="ml-' + safeId + '" value="100" min="0" step="10">' +
+        '</div><div class="calc-out"></div>';
+      const mlEl = box.querySelector("#ml-" + safeId);
+      const out = box.querySelector(".calc-out");
+      const upd = () => { out.innerHTML = mlVerdict(parseFloat(mlEl.value)); };
+      mlEl.addEventListener("input", upd); upd();
+    }
+    return box;
+  }
+
+  function render(){
+    const raw = state.q.trim();
+    const q = squash(raw);
+    const cho = q ? isChoQuery(q) : false;
+    const pool = ITEMS.filter(it => {
+      if (state.cat && it.c !== state.cat) return false;
+      if (state.verdict && resolve(it).v !== state.verdict) return false;
+      return true;
+    });
+
+    let list = pool;
+    if (q){
+      let scored = pool.map(it => ({ it, s:scoreOf(it, q, cho) })).filter(x => x.s < 99);
+      // 이름·별칭에 맞는 게 있으면 설명까지 뒤진 결과는 감춰서 깔끔하게
+      if (scored.some(x => x.s < 8)) scored = scored.filter(x => x.s < 8);
+      scored.sort((a,b) => a.s - b.s || a.it.n.length - b.it.n.length);
+      list = scored.map(x => x.it);
+    }
+
+    renderHero(q ? list : []);
+
+    grid.innerHTML = "";
+    list.forEach(it => {
+      const r = resolve(it);
+      const meta = V[r.v];
+      const ox = oxOf(it, r);
+      const card = document.createElement("article");
+      card.className = "item";
+      card.style.setProperty("--c", meta.c);
+      card.style.setProperty("--cbg", meta.bg);
+      card.style.setProperty("--cline", meta.line);
+      card.innerHTML =
+        '<div class="item-top">' +
+          '<span class="emo" aria-hidden="true">' + it.e + '</span>' +
+          '<div style="flex:1;min-width:0">' +
+            '<h3 class="item-name">' + it.n + '</h3>' +
+            '<span class="item-cat">' + it.c + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<span class="verdict">' + meta.label + '</span>' +
+        '<div class="ox">' +
+          '<span class="oxpill" style="--mc:' + MARK_COLOR[ox[0]] + '">기내 <b class="m">' + ox[0] + '</b></span>' +
+          '<span class="oxpill" style="--mc:' + MARK_COLOR[ox[1]] + '">위탁 <b class="m">' + ox[1] + '</b></span>' +
+        '</div>' +
+        '<p class="desc">' + r.d + '</p>';
+      if (r.calc) card.appendChild(makeCalc(it, r.v));
+      grid.appendChild(card);
+    });
+
+    syncReset();
+    $("#count").textContent = list.length;
+    $("#count-label").textContent = "개 품목" + (state.route === "dom" ? " · 국내선 기준" : " · 국제선 기준");
+    empty.hidden = list.length !== 0;
+  }
+
+  const hero = $("#hero");
+  function renderHero(list){
+    if (!list.length){ hero.hidden = true; hero.innerHTML = ""; return; }
+    const it = list[0], r = resolve(it), meta = V[r.v], ox = oxOf(it, r);
+    const alias = aliasHit(it, squash(state.q));
+    hero.hidden = false;
+    hero.style.setProperty("--c", meta.c);
+    hero.style.setProperty("--cbg", meta.bg);
+    hero.style.setProperty("--cline", meta.line);
+    hero.innerHTML =
+      '<span class="hero-emo" aria-hidden="true">' + it.e + '</span>' +
+      '<div class="hero-text">' +
+        '<p class="hero-kicker">' + (state.route === "dom" ? "국내선" : "국제선") + ' · ' + it.c + '</p>' +
+        '<h2 class="hero-name">' + it.n + '</h2>' +
+        '<p class="hero-verdict">' + meta.label + '</p>' +
+        (alias ? '<p class="hero-alias">‘' + esc(state.q.trim()) + '’ → <b>' + esc(it.n) + '</b>' + josaRo(it.n) + ' 찾았어요</p>' : '') +
+        '<p class="hero-desc">' + r.d + '</p>' +
+        (list.length > 1 ? '<p class="hero-more">비슷한 검색 결과 ' + (list.length - 1) + '개가 아래에 더 있어요.</p>' : '') +
+      '</div>' +
+      '<div class="hero-ox">' +
+        '<div class="oxtile" style="--mc:' + MARK_COLOR[ox[0]] + '"><span class="t">기내</span><span class="m">' + ox[0] + '</span></div>' +
+        '<div class="oxtile" style="--mc:' + MARK_COLOR[ox[1]] + '"><span class="t">위탁</span><span class="m">' + ox[1] + '</span></div>' +
+      '</div>';
+  }
+
+  /* ── 자동완성 + 엔터 확정 ───────────────── */
+  const qEl = $("#q"), sugEl = $("#suggest"), formEl = $("#searchform");
+  let sugList = [], sugIdx = -1;
+
+  function esc(t){ return t.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+  function matches(q){
+    if (!q) return [];
+    const cho = isChoQuery(q);
+    return ITEMS.map(it => ({ it, s:scoreOf(it, q, cho) }))
+                .filter(x => x.s < 8)
+                .sort((a,b) => a.s - b.s || a.it.n.length - b.it.n.length)
+                .slice(0, 8).map(x => x.it);
+  }
+
+  function hiName(name, q){
+    const flat = squash(name);
+    const at = flat.indexOf(q);
+    if (at < 0) return esc(name);
+    // 공백을 제거한 위치를 원래 문자열 위치로 되돌린다
+    let seen = 0, start = -1, end = -1;
+    for (let i = 0; i < name.length; i++){
+      if (/\s/.test(name[i])) continue;
+      if (seen === at) start = i;
+      if (seen === at + q.length - 1){ end = i + 1; break; }
+      seen++;
+    }
+    if (start < 0 || end < 0) return esc(name);
+    return esc(name.slice(0, start)) + "<mark>" + esc(name.slice(start, end)) + "</mark>" + esc(name.slice(end));
+  }
+
+  function renderSuggest(){
+    const q = squash(state.q);
+    sugList = matches(q);
+    if (!sugList.length){
+      sugEl.hidden = true; sugEl.innerHTML = ""; sugIdx = -1;
+      qEl.setAttribute("aria-expanded","false");
+      return;
+    }
+    sugEl.hidden = false;
+    qEl.setAttribute("aria-expanded","true");
+    sugEl.innerHTML = sugList.map((it, i) => {
+      const r = resolve(it), ox = oxOf(it, r), alias = aliasHit(it, q);
+      return '<li role="option" id="sug-' + i + '" data-i="' + i + '" aria-selected="' + (i === sugIdx) + '">' +
+        '<span class="s-emo" aria-hidden="true">' + it.e + '</span>' +
+        '<span class="s-name">' + hiName(it.n, q) +
+          (alias ? '<span class="s-alias">' + esc(alias) + '</span>' : '') + '</span>' +
+        '<span class="s-ox">' +
+          '<span>기내 <b style="color:' + MARK_COLOR[ox[0]] + '">' + ox[0] + '</b></span>' +
+          '<span>위탁 <b style="color:' + MARK_COLOR[ox[1]] + '">' + ox[1] + '</b></span>' +
+        '</span></li>';
+    }).join("") +
+    '<li class="suggest-foot" role="presentation"><kbd>↑</kbd><kbd>↓</kbd> 고르기 <kbd>Enter</kbd> 확인 <kbd>Esc</kbd> 닫기</li>';
+    markSuggest();
+  }
+
+  function markSuggest(){
+    sugEl.querySelectorAll('li[role="option"]').forEach((li, i) => {
+      li.setAttribute("aria-selected", String(i === sugIdx));
+      if (i === sugIdx) li.scrollIntoView({ block:"nearest" });
+    });
+    qEl.setAttribute("aria-activedescendant", sugIdx >= 0 ? "sug-" + sugIdx : "");
+  }
+
+  function closeSuggest(){
+    sugEl.hidden = true; sugIdx = -1;
+    qEl.setAttribute("aria-expanded","false");
+    qEl.removeAttribute("aria-activedescendant");
+  }
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function confirmSearch(name){
+    if (name){ state.q = name; qEl.value = name; }
+    closeSuggest();
+    render();
+    const h = $("#hero");
+    if (!h.hidden){
+      const y = h.getBoundingClientRect().top + window.scrollY - 96;
+      window.scrollTo({ top: Math.max(0, y), behavior: reduceMotion ? "auto" : "smooth" });
+      h.classList.remove("pop"); void h.offsetWidth; h.classList.add("pop");
+    } else if (state.q.trim()){
+      qEl.classList.remove("shake"); void qEl.offsetWidth; qEl.classList.add("shake");
+    }
+  }
+
+  formEl.addEventListener("submit", e => {
+    e.preventDefault();
+    confirmSearch(sugIdx >= 0 && sugList[sugIdx] ? sugList[sugIdx].n : null);
+  });
+
+  qEl.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp"){
+      if (sugEl.hidden || !sugList.length) return;
+      e.preventDefault();
+      sugIdx = e.key === "ArrowDown"
+        ? (sugIdx + 1) % sugList.length
+        : (sugIdx <= 0 ? sugList.length - 1 : sugIdx - 1);
+      markSuggest();
+    } else if (e.key === "Escape"){
+      closeSuggest();
+    }
+  });
+
+  sugEl.addEventListener("mousedown", e => {
+    const li = e.target.closest('li[role="option"]'); if (!li) return;
+    e.preventDefault();
+    confirmSearch(sugList[Number(li.dataset.i)].n);
+  });
+
+  document.addEventListener("click", e => {
+    if (!formEl.contains(e.target)) closeSuggest();
+  });
+
+  const resetBtn = $("#reset");
+  function syncReset(){
+    resetBtn.dataset.active = String(Boolean(state.q || state.cat || state.verdict));
+  }
+
+  /* 이벤트 */
+  resetBtn.addEventListener("click", () => {
+    state.q = ""; state.cat = null; state.verdict = null;
+    $("#q").value = "";
+    vWrap.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed","false"));
+    cWrap.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed","false"));
+    closeSuggest();
+    render();
+    qEl.focus();
+  });
+  sel.addEventListener("change", e => { state.airline = e.target.value; renderRule(); });
+  qEl.addEventListener("input", e => { state.q = e.target.value; sugIdx = -1; renderSuggest(); render(); });
+  qEl.addEventListener("focus", () => { if (state.q.trim()) renderSuggest(); });
+  document.querySelectorAll(".seg button").forEach(b => {
+    b.addEventListener("click", () => {
+      state.route = b.dataset.route;
+      document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      if (!sugEl.hidden) renderSuggest();
+      render();
+    });
+  });
+  vWrap.addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    state.verdict = state.verdict === b.dataset.verdict ? null : b.dataset.verdict;
+    vWrap.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.verdict === state.verdict)));
+    render();
+  });
+  cWrap.addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    state.cat = state.cat === b.dataset.cat ? null : b.dataset.cat;
+    cWrap.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", String(x.dataset.cat === state.cat)));
+    render();
+  });
+
+  renderRule();
+  render();
+
+  /* 홈에서 ?q=보조배터리 형태로 들어오면 바로 결과를 띄운다 */
+  try {
+    const params = new URLSearchParams(location.search);
+    const q0 = (params.get("q") || "").trim();
+    const a0 = (params.get("airline") || "").trim();
+    const r0 = (params.get("route") || "").trim();
+    if (a0 && AIRLINES.some(x => x.id === a0)){ state.airline = a0; sel.value = a0; renderRule(); }
+    if (r0 === "dom" || r0 === "int"){
+      state.route = r0;
+      document.querySelectorAll(".seg button").forEach(x =>
+        x.setAttribute("aria-pressed", String(x.dataset.route === r0)));
+    }
+    if (q0){
+      state.q = q0; qEl.value = q0;
+      render();
+      const h = $("#hero");
+      if (!h.hidden){
+        requestAnimationFrame(() => {
+          const y = h.getBoundingClientRect().top + window.scrollY - 110;
+          window.scrollTo({ top: Math.max(0, y), behavior: reduceMotion ? "auto" : "smooth" });
+          h.classList.add("pop");
+        });
+      }
+    } else if (r0){ render(); }
+  } catch (_) {}
+})();
+</script>

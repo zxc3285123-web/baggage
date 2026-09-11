@@ -1,0 +1,106 @@
+<div class="controls">
+  <div class="wrap ctrl-grid">
+    <div class="field">
+      <label for="airline">항공사</label>
+      <select id="airline"></select>
+    </div>
+    <div class="field">
+      <label for="route-dom">노선</label>
+      <div class="seg" role="group" aria-label="노선 선택">
+        <button type="button" id="route-dom" data-route="dom" aria-pressed="false">국내선</button>
+        <button type="button" id="route-int" data-route="int" aria-pressed="true">국제선</button>
+      </div>
+    </div>
+    <form class="field ctrl-search" id="searchform" role="search" autocomplete="off">
+      <label for="q">물건 검색 · 엔터로 확인</label>
+      <input type="search" id="q" placeholder="보조배터리, 김치, 향수, 드론… (ㅂㅈㅂㅌㄹ 도 OK)" autocomplete="off"
+             role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list">
+      <ul class="suggest" id="suggest" role="listbox" aria-label="검색 제안" hidden></ul>
+    </form>
+  </div>
+</div>
+
+<main class="wrap">
+  <section class="rulecard" aria-labelledby="rule-name">
+    <div class="rule-head">
+      <span class="rule-name" id="rule-name">대한항공</span>
+      <span class="rule-code" id="rule-code">KE</span>
+      <span class="rule-tag" id="rule-tag">국적 대형항공사</span>
+    </div>
+    <div class="rule-body">
+      <div class="rule-cell">
+        <h3>기내 휴대 수하물</h3>
+        <span class="rule-big" id="rule-cabin-kg">10kg</span>
+        <span class="rule-sm" id="rule-cabin-size">55×40×20cm · 삼변 합 115cm 이내</span>
+        <span class="rule-sm" id="rule-cabin-cnt">가방 1개 + 개인 소지품 1개</span>
+      </div>
+      <div class="rule-cell">
+        <h3>위탁 수하물 (무료)</h3>
+        <span class="rule-big" id="rule-checked-kg">23kg</span>
+        <span class="rule-sm" id="rule-checked-size">1개 · 삼변 합 158cm 이내</span>
+        <span class="rule-sm" id="rule-checked-note">미주 노선은 2개까지</span>
+      </div>
+    </div>
+    <div class="rule-foot">
+      <span id="rule-extra"></span>
+      <a id="rule-link" href="#" target="_blank" rel="noopener">공식 규정 확인 →</a>
+    </div>
+  </section>
+
+  <div class="filters">
+    <div class="chiprow" id="verdict-filters" role="group" aria-label="판정으로 거르기"></div>
+    <div class="chiprow" id="cat-filters" role="group" aria-label="분류로 거르기"></div>
+  </div>
+
+  <section class="hero" id="hero" hidden></section>
+
+  <p class="countline"><b id="count">0</b><span id="count-label">개 품목</span><button type="button" class="reset" id="reset">↺ 검색·필터 초기화</button></p>
+
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" hidden>
+    <span class="big">🧳</span>
+    <p>목록에 없는 물건이네요. 아래 <strong>다섯 가지 원칙</strong>으로 대부분 판단할 수 있어요.</p>
+    <ol class="rulehint">
+      <li><b>배터리·전자기기</b>가 들어 있다 → <span style="color:var(--v-cabin)">기내만</span>. 리튬배터리는 위탁이 금지예요.</li>
+      <li><b>흐르거나 짜서 쓰는 것</b>(액체·젤·크림·스프레이) → 국제선은 100ml 이하만 기내, 넘으면 <span style="color:var(--v-checked)">위탁</span>.</li>
+      <li><b>날이 있거나 뾰족한 것</b> → <span style="color:var(--v-checked)">위탁</span>. 날 길이 6cm 이하 가위·손톱깎이 정도만 예외예요.</li>
+      <li><b>길고 단단해 때릴 수 있는 것</b>(운동 장비, 공구, 봉) → <span style="color:var(--v-checked)">위탁</span>.</li>
+      <li><b>불붙거나 터지거나 녹이는 것</b>(가스·인화성·부식성) → <span style="color:var(--v-ban)">기내·위탁 모두 금지</span>.</li>
+    </ol>
+    <p class="hint-foot">그래도 애매하면 항공사 고객센터나 공항 보안검색대에 물어보는 게 가장 확실해요.</p>
+  </div>
+
+  <section class="notes">
+    <h2>짐 싸기 전 꼭 기억할 것</h2>
+    <ul class="notelist">
+      <li>
+        <h3>보조배터리는 무조건 기내로</h3>
+        <p>2025년 3월부터 위탁 수하물에 넣을 수 없고, 기내에서도 선반이 아닌 몸이나 좌석 앞주머니에 보관해야 해요. 기내 충전도 금지입니다.</p>
+      </li>
+      <li>
+        <h3>액체는 용기 표시 용량이 기준</h3>
+        <p>국제선은 100ml 이하 용기만, 1L 투명 지퍼백 1개에 모아야 해요. 200ml 병에 조금 남아 있어도 통과되지 않습니다.</p>
+      </li>
+      <li>
+        <h3>국내선은 액체가 자유로워요</h3>
+        <p>국내선에는 100ml·지퍼백 규정이 적용되지 않아요. 다만 라이터·부탄가스 같은 위험물 규정은 국내선에도 그대로 적용됩니다.</p>
+      </li>
+      <li>
+        <h3>라이터는 기내 1개, 위탁은 0개</h3>
+        <p>1인당 휴대용 라이터 1개 또는 안전성냥 1개만 몸에 지닐 수 있어요. 부치는 짐에 넣으면 적발됩니다.</p>
+      </li>
+      <li>
+        <h3>면세 액체는 봉투를 뜯지 마세요</h3>
+        <p>영수증과 함께 STEB 봉투에 밀봉된 상태여야 기내 반입이 가능해요. 환승할 때 뜯으면 압수될 수 있습니다.</p>
+      </li>
+      <li>
+        <h3>깨지는 것·귀중품은 기내로</h3>
+        <p>현금, 여권, 노트북, 카메라, 약은 위탁 수하물 분실·파손 보상 대상에서 빠지는 경우가 많아 직접 들고 타는 편이 안전해요.</p>
+      </li>
+    </ul>
+    <p class="disclaimer">
+      규정은 운임 등급·노선·기종에 따라 달라질 수 있어요. 특히 특가·라이트 운임은 무료 위탁 수하물이 없는 경우가 많으니 출발 전 예약하신 항공권 기준으로 항공사 공식 페이지를 한 번 더 확인해 주세요.
+      <br>티웨이항공은 2026년 9월 10일부터 <strong>트리니티항공</strong>으로 이름이 바뀌었어요(편명 코드 TW는 그대로).
+    </p>
+  </section>
+</main>

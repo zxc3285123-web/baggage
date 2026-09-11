@@ -2,7 +2,7 @@
 POSTS = {}
 
 POSTS["liquid"] = dict(
-slug="posts/liquid-100ml-rule.html",
+slug="guide/liquid-100ml-rule.html",
 title="액체류 100ml 규정 — 남은 양이 아니라 용기 크기가 기준입니다",
 desc="국제선 액체 반입 100ml·1L 지퍼백 규정의 정확한 적용 방법과 예외, 액체로 오해받기 쉬운 품목까지 정리했습니다.",
 tag="액체·화장품", date="2026-09-11", read="6분",
@@ -89,7 +89,7 @@ body="""
 )
 
 POSTS["banned"] = dict(
-slug="posts/prohibited-items.html",
+slug="guide/prohibited-items.html",
 title="기내 반입 금지 물품 총정리 — 다섯 가지 원칙만 알면 됩니다",
 desc="공항 보안검색에서 걸리는 물품을 다섯 가지 원칙으로 정리했습니다. 칼·공구·스포츠 용품·인화성 물질까지 카테고리별 목록 포함.",
 tag="반입 금지", date="2026-09-11", read="5분",

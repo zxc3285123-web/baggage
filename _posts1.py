@@ -2,7 +2,7 @@
 POSTS = {}
 
 POSTS["battery"] = dict(
-slug="posts/power-bank-rules.html",
+slug="guide/power-bank-rules.html",
 title="보조배터리 기내 반입 규정 총정리 — 몇 개까지, 몇 Wh까지?",
 desc="2025년 3월 규정 개편 이후 달라진 보조배터리 반입 기준. Wh 계산법, 개수 제한, 위탁 금지 이유, 절연 조치까지 한 번에 정리했습니다.",
 tag="전자·배터리", date="2026-09-11", read="7분",
