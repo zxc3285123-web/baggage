@@ -19,7 +19,7 @@ def fill(t):
              .replace("[시행일]", EFFECTIVE)
              .replace("[사이트명]", SITE_NAME))
 # ─────────────────────────────────────────────
-SITE_DESC = "항공 수하물 297개 품목을 기내·위탁·반입금지로 바로 알려주는 여행 준비 사이트"
+SITE_DESC = "항공 수하물 규정을 항공사별로 비교하고 품목별 기내·위탁·반입금지를 바로 알려주는 여행 준비 사이트"
 TODAY = "2026-09-11"
 
 CLOUDS = ('<svg viewBox="0 0 1000 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'
@@ -119,6 +119,7 @@ AD = """<div class="adslot">
 
 # ── 글 모으기 ────────────────────────────────
 from _items import ITEMS, CATS
+from _airlines import AIRLINES
 import _posts1, _posts2, _posts3, _posts4
 ALL_POSTS = {}
 for mod in (_posts1, _posts2, _posts3, _posts4):
@@ -225,6 +226,21 @@ faq_schema = json.dumps({
                  "acceptedAnswer":{"@type":"Answer","text":a}} for q, a in FAQ]
 }, ensure_ascii=False)
 
+_atags = []
+for _a in AIRLINES:
+    if _a["tag"] not in _atags: _atags.append(_a["tag"])
+_arow = []
+for _t in _atags:
+    _arow.append(f'<tr><th colspan="4" style="background:var(--accent-soft);color:var(--accent-deep)">{_t}</th></tr>')
+    for _a in [x for x in AIRLINES if x["tag"] == _t]:
+        _arow.append(
+            f'<tr><td>{_a["name"]} <span style="color:var(--muted);font-size:11.5px">{_a["code"]}</span></td>'
+            f'<td class="num">{_a["cabinKg"]}</td><td class="num">{_a["checkedKg"]}</td>'
+            f'<td style="font-size:12.8px;color:var(--muted)">{_a["checkedNote"]}</td></tr>')
+air_table = ('<div class="tablewrap"><table>'
+    '<thead><tr><th>항공사</th><th>기내</th><th>위탁 무료</th><th>메모</th></tr></thead>'
+    '<tbody>' + "".join(_arow) + '</tbody></table></div>')
+
 home_cards = "".join(
     f'<a class="card" href="guide/{os.path.basename(p["slug"])}">'
     f'<span class="tag" style="align-self:flex-start">{p["tag"]}</span>'
@@ -235,7 +251,7 @@ page(path="index.html", cur="index.html", depth=0,
      desc=SITE_DESC,
      head_extra=f'<script type="application/ld+json">{faq_schema}</script>\n',
      body=f"""{hero("Cabin · Checked · Prohibited", "이 짐, 들고 탈까 부칠까",
-       "물건 이름을 치면 기내·위탁·반입금지를 신호등처럼 알려드립니다. 항공사 14곳 규정과 품목 {len(ITEMS)}개를 담았습니다.")}
+       f"물건 이름을 치면 기내·위탁·반입금지를 신호등처럼 알려드립니다. 항공사 {len(AIRLINES)}곳 규정과 품목 {len(ITEMS)}개를 담았습니다.")}
 <main class="wrap">
 
   <div class="toolcta">
@@ -257,22 +273,8 @@ page(path="index.html", cur="index.html", depth=0,
 
   <article class="post" style="max-width:none">
     <h2>항공사별 수하물 한눈에</h2>
-    <p>기내 기준은 국내 항공사끼리 거의 같습니다. 차이가 나는 쪽은 위탁 무료 허용량이에요. 아래는 국제선 기본 운임 기준이며, 특가·라이트 운임은 무료 위탁이 없을 수 있습니다.</p>
-    <div class="tablewrap">
-    <table>
-      <thead><tr><th>항공사</th><th>기내</th><th>위탁 무료</th><th>메모</th></tr></thead>
-      <tbody>
-        <tr><td>대한항공</td><td class="num">10kg</td><td class="num">23kg</td><td>미주 2개</td></tr>
-        <tr><td>아시아나항공</td><td class="num">10kg</td><td class="num">23kg</td><td>미주 2개</td></tr>
-        <tr><td>제주항공</td><td class="num">10kg</td><td class="num">15kg</td><td>베이직 제외</td></tr>
-        <tr><td>진에어</td><td class="num">10kg</td><td class="num">15kg</td><td>괌 2개 23kg</td></tr>
-        <tr><td>트리니티항공</td><td class="num">10kg</td><td class="num">15~20kg</td><td>구 티웨이</td></tr>
-        <tr><td>에어부산 · 에어서울</td><td class="num">10kg</td><td class="num">15kg</td><td>특가 제외</td></tr>
-        <tr><td>이스타항공</td><td class="num">10kg</td><td class="num">15kg</td><td>할인 운임 제외</td></tr>
-        <tr><td>피치 · 에어아시아 · 세부퍼시픽</td><td class="num">7kg</td><td>유료</td><td>가방+소지품 합산</td></tr>
-      </tbody>
-    </table>
-    </div>
+    <p>기내 기준은 국내 항공사끼리 거의 같지만, 외항사는 7kg이 흔하고 중국 항공사는 5kg까지 내려갑니다. 아래는 <strong>국제선 이코노미 기본 운임</strong> 기준이며 특가·라이트 운임은 무료 위탁이 없을 수 있어요.</p>
+    {air_table}
     <p><a href="guide/airline-baggage-compare.html">항공사별 규정 자세히 보기 →</a></p>
 
     <h2>자주 묻는 질문</h2>
@@ -288,7 +290,7 @@ page(path="index.html", cur="index.html", depth=0,
   <article class="post" style="max-width:none">
     <h2>이 사이트에 대하여</h2>
     <p>공항 보안검색에서 물건을 버리는 일은 대부분 규정을 어겨서가 아니라 <strong>어느 쪽에 넣어야 하는지를 몰라서</strong> 생깁니다. 보조배터리는 부치면 안 되고, 액체는 남은 양이 아니라 용기 크기가 기준이고, 가위는 날 길이 6cm가 경계선이죠. 이런 기준들이 항공사 홈페이지 곳곳에 흩어져 있어 출발 전에 다 찾아보기가 어렵습니다.</p>
-    <p>그래서 국토교통부 고시와 국내외 항공사 14곳의 공식 규정을 직접 확인해 <strong>품목 {len(ITEMS)}개를 한곳에 모았습니다.</strong> 규정이 바뀌면 갱신하고, 출처가 확인되지 않은 내용은 싣지 않습니다. 자세한 내용은 <a href="about.html">소개 페이지</a>에 적어 두었습니다.</p>
+    <p>그래서 국토교통부 고시와 국내외 항공사 {len(AIRLINES)}곳의 공식 규정을 직접 확인해 <strong>품목 {len(ITEMS)}개를 한곳에 모았습니다.</strong> 규정이 바뀌면 갱신하고, 출처가 확인되지 않은 내용은 싣지 않습니다. 자세한 내용은 <a href="about.html">소개 페이지</a>에 적어 두었습니다.</p>
   </article>
 </main>""")
 
@@ -306,8 +308,12 @@ page(path="about.html", cur="about.html", depth=0,
   <p>이 사이트의 정보는 아래 출처를 직접 확인해 작성했습니다. 2차 가공된 블로그 글이 아니라 원문을 기준으로 삼았습니다.</p>
   <ul>
     <li>국토교통부 및 정책브리핑의 항공 보안 고시 · 보도자료</li>
-    <li>대한항공, 아시아나항공, 제주항공, 진에어, 트리니티항공(구 티웨이), 에어부산, 에어서울, 이스타항공, 에어프레미아의 공식 수하물 안내</li>
-    <li>ANA, JAL, 피치항공, 에어아시아, 세부퍼시픽의 공식 수하물 안내</li>
+    <li><strong>국적 항공사 10곳</strong> — 대한항공, 아시아나항공, 에어프레미아, 제주항공, 진에어, 트리니티항공(구 티웨이), 에어부산, 에어서울, 에어로케이, 이스타항공</li>
+    <li><strong>일본 5곳</strong> — ANA, JAL, 피치항공, 집에어, 스프링재팬</li>
+    <li><strong>중화권 12곳</strong> — 캐세이퍼시픽, 중화항공, 에바항공, 스타룩스, 중국동방, 중국남방, 에어차이나, 춘추항공, 홍콩익스프레스, 홍콩항공, 그레이터베이, 타이거에어 타이완</li>
+    <li><strong>동남아 11곳</strong> — 싱가포르항공, 타이항공, 베트남항공, 베트젯, 필리핀항공, 세부퍼시픽, 에어아시아, 타이 에어아시아 엑스, 스쿠트, 말레이시아항공, 가루다인도네시아</li>
+    <li><strong>중동·유럽 9곳</strong> — 에미레이트, 카타르항공, 에티하드, 터키항공, 루프트한자, 에어프랑스, KLM, LOT 폴란드, 핀에어</li>
+    <li><strong>미주·대양주 5곳</strong> — 델타, 유나이티드, 아메리칸, 에어캐나다, 콴타스</li>
     <li>국제민간항공기구(ICAO)의 위험물 운송 기준</li>
   </ul>
 
@@ -488,6 +494,14 @@ ITEMS_JS = ("  const ITEMS = [\n" + ",\n".join(_rows) + "\n  ];\n\n"
 TOOL_SCRIPT = TOOL_SCRIPT.replace("/*__ITEMS__*/", ITEMS_JS)
 assert "const ITEMS" in TOOL_SCRIPT
 
+# 항공사 목록도 _airlines.py 에서 만든다
+_af = ["id","name","code","tag","cabinKg","cabinSize","cabinCnt",
+       "checkedKg","checkedSize","checkedNote","extra","link"]
+_arows = ["    { " + ", ".join(f'{k}:{_js(a[k])}' for k in _af) + " }" for a in AIRLINES]
+AIRLINES_JS = "  const AIRLINES = [\n" + ",\n".join(_arows) + "\n  ];\n"
+TOOL_SCRIPT = TOOL_SCRIPT.replace("/*__AIRLINES__*/", AIRLINES_JS)
+assert "const AIRLINES" in TOOL_SCRIPT
+
 # 2) 검색엔진이 읽는 정적 목록도 같은 데이터에서 만든다
 VLABEL = {"both":"기내 · 위탁 모두 가능","cabin":"기내만 가능","checked":"위탁만 가능",
           "cond":"조건부 가능","ban":"기내 · 위탁 모두 금지"}
@@ -527,10 +541,10 @@ STATIC_ITEMS = _static_items()
 
 page(path="tool.html", cur="tool.html", depth=0,
      title=f"수하물 판별기 — 기내? 위탁? | {SITE_NAME}",
-     desc="항공사와 노선을 고르고 물건 이름을 검색하면 기내·위탁·반입금지를 바로 알려줍니다. 품목 297개, 보조배터리 Wh 계산기 포함.",
+     desc=f"항공사와 노선을 고르고 물건 이름을 검색하면 기내·위탁·반입금지를 바로 알려줍니다. 항공사 {len(AIRLINES)}곳, 품목 {len(ITEMS)}개.",
      head_extra=TOOL_STYLE + "\n<style>.controls{top:52px; z-index:25}</style>\n",
      body=f"""{hero("Cabin · Checked · Prohibited", "이 짐, 들고 탈까 부칠까",
-       "항공사와 노선을 고르고 물건 이름을 치면 기내·위탁·반입금지를 신호등처럼 알려드려요. 품목 {len(ITEMS)}개를 담았고, 초성으로도 찾을 수 있어요.")}
+       f"항공사와 노선을 고르고 물건 이름을 치면 기내·위탁·반입금지를 신호등처럼 알려드려요. 항공사 {len(AIRLINES)}곳, 품목 {len(ITEMS)}개를 담았고 초성으로도 찾을 수 있어요.")}
 
 {TOOL_BODY}
 
